@@ -1,0 +1,9 @@
+scrapper:
+  language: ["ru"]
+  game_names: ["Just Chatting"]
+  max_stream_count: 1000
+  conditions:
+    viewer_count: <100
+
+
+  #descending: True
