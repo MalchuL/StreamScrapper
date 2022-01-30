@@ -3,6 +3,7 @@ import logging
 from twitchAPI.twitch import Twitch
 
 from twitch_parser.utils.conditions import KeyValueComparator
+from twitch_parser.utils.numeric_utils import value_or_inf
 from twitch_parser.utils.structures import empty_list_to_none
 
 
@@ -12,7 +13,7 @@ class ChannelsScrapper:
     def __init__(self, twitch_api: Twitch, scrapper_config):
         self.scrapper_config = scrapper_config
         self.channel_filter = KeyValueComparator(scrapper_config.conditions)
-        self.max_channels_count = self.scrapper_config.max_channels_count if self.scrapper_config.max_channels_count is not None else float('+inf')
+        self.max_channels_count = value_or_inf(self.scrapper_config.max_channels_count)
         self.twitch_api = twitch_api
 
     def get_available_channels(self, ids):

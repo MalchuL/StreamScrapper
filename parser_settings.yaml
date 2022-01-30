@@ -27,3 +27,12 @@ chanels_scrapper:
     view_count: ">11390"
 
   #descending: True
+
+clips_scrapper:
+  game_names: ["Just Chatting"]
+  max_clips_count: null
+  start: now  # In RFC 3339 format on now
+  before_days: 10
+  conditions:
+
+  #descending: True

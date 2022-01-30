@@ -2,7 +2,9 @@ from pprint import pprint
 import logging
 from twitchAPI.twitch import Twitch
 
+from twitch_parser.game_scrapper.games_scrapper import GamesScrapper
 from twitch_parser.utils.conditions import KeyValueComparator
+from twitch_parser.utils.numeric_utils import value_or_inf
 from twitch_parser.utils.structures import empty_list_to_none
 
 
@@ -12,13 +14,12 @@ class ActiveStreamsScrapper:
     def __init__(self, twitch_api: Twitch, scrapper_config):
         self.scrapper_config = scrapper_config
         self.stream_filter = KeyValueComparator(scrapper_config.conditions)
-        self.max_stream_count = self.scrapper_config.max_stream_count
+        self.max_stream_count = value_or_inf(self.scrapper_config.max_stream_count)
         self.twitch_api = twitch_api
-
+        self.game_scrapper = GamesScrapper(self.twitch_api)
 
     def get_game_ids(self, game_names):
-        games = self.twitch_api.get_games(names=list(game_names))['data']
-        return [game['id'] for game in games]
+        return self.game_scrapper.get_game_ids(game_names)
 
     def get_available_streams(self):
         twitch_api = self.twitch_api
