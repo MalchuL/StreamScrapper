@@ -21,7 +21,7 @@ class LatestClipsDownloader:
 
     def get_clips(self):
         logging.info('Start collecting streams')
-        streams = self.streams_parser.get_available_streams()
+        streams = self.streams_parser.get_filtered_streams()
         assert len(streams) > 0
         with open(os.path.join(self.output_folder, "streams_data.json"), "w") as streams_data:
             json.dump(streams, streams_data, indent=4, sort_keys=True)
