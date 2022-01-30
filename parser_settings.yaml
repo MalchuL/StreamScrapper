@@ -16,7 +16,7 @@ active_streams_scrapper:
 #    user_id: '618722304'
 #    user_login: 'aslan_yan'
 #    user_name: 'aslan_yan'
-    viewer_count: <100
+    viewer_count: <50
 
 
   #descending: True
@@ -24,15 +24,14 @@ active_streams_scrapper:
 chanels_scrapper:
   max_channels_count: null
   conditions:
-    view_count: ">11390"
 
   #descending: True
 
 clips_scrapper:
   game_names: ["Just Chatting"]
   max_clips_count: null
-  start: "01/01/22 01:55:19"  # In '%d/%m/%y %H:%M:%S' format on now for ex 18/09/19 01:55:19
-  before_days: 10
+  start: now  # In '%d/%m/%y %H:%M:%S' format on now for ex 18/09/19 01:55:19
+  before_days: 30
   conditions:
-
+    view_count: ">=1"
   #descending: True

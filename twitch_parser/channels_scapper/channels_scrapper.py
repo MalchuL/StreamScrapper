@@ -16,7 +16,7 @@ class ChannelsScrapper:
         self.max_channels_count = value_or_inf(self.scrapper_config.max_channels_count)
         self.twitch_api = twitch_api
 
-    def get_available_channels(self, ids):
+    def _get_available_channels(self, ids):
         twitch_api = self.twitch_api
         channels = []
         for id in range(0, len(ids), self.PAGINATION_MAXIMUM):
@@ -27,10 +27,8 @@ class ChannelsScrapper:
 
         return channels
 
-
-    def get_channels_from_streams(self, streams=[]):
-        user_ids = [stream['user_id'] for stream in streams]
-        channels = self.get_available_channels(user_ids)
+    def get_channels_by_ids(self, user_ids):
+        channels = self._get_available_channels(user_ids)
 
         # Log unfinded channels
         channels_user_ids = [channel['id'] for channel in channels]
@@ -50,4 +48,8 @@ class ChannelsScrapper:
                 filtered_channels.append(channel)
 
         return filtered_channels
+
+    def get_channels_from_streams(self, streams=[]):
+        user_ids = [stream['user_id'] for stream in streams]
+        return self.get_channels_by_ids(user_ids)
 

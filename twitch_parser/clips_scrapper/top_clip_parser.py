@@ -16,7 +16,7 @@ class TopClipScrapper:
         self.scrapper_config = scrapper_config
         self.twitch_api = twitch_api
         self.game_scrapper = GamesScrapper(self.twitch_api)
-
+        self.clip_filter = KeyValueComparator(scrapper_config.conditions)
         self.game_names = self.scrapper_config.game_names
         self.max_clips_count = value_or_inf(self.scrapper_config.max_clips_count)
 
@@ -52,11 +52,16 @@ class TopClipScrapper:
 
             if 'cursor' in part_clips['pagination']:
                 cursor = part_clips['pagination']['cursor']
+
             else:
                 if len(clips) == 0:
-                    raise RuntimeError(f'Cannot fetch any clips, data was returned={part_clips}')
-                else:
-                    break
+                    logging.error(f'No clips was founded for broadcaster {broadcaster_ids}')
+                break
             logging.debug(f'fetched {len(clips)} clips, clips with {part_clips["data"][0]}')
-        return clips
+
+        filtered_clips = []
+        for clip in clips:
+            if self.clip_filter.check_condition(clip):
+                filtered_clips.append(clip)
+        return filtered_clips
 
