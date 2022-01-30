@@ -1,4 +1,4 @@
-scrapper:
+active_streams_scrapper:
   language: ["ru"]
   game_names: ["Just Chatting"]
   max_stream_count: 1000
@@ -18,5 +18,12 @@ scrapper:
 #    user_name: 'aslan_yan'
     viewer_count: <100
 
+
+  #descending: True
+
+chanels_scrapper:
+  max_channels_count: null
+  conditions:
+    view_count: ">11390"
 
   #descending: True

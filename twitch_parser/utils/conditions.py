@@ -44,8 +44,9 @@ def parse_condition(condition: str, default_condition='==', to_type=float):
 class KeyValueComparator:
     def __init__(self, kv_conditions):
         self.conditions = {}
-        for key, condition in kv_conditions.items():
-            self.conditions[key] = parse_condition(condition)
+        if kv_conditions is not None and len(kv_conditions):
+            for key, condition in kv_conditions.items():
+                self.conditions[key] = parse_condition(condition)
 
     def __call__(self, data):
         return self.check_condition(data)

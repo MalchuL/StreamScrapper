@@ -2,11 +2,11 @@ from pprint import pprint
 import logging
 from twitchAPI.twitch import Twitch
 
-from twitch_parser.utils.conditions import parse_condition, KeyValueComparator
+from twitch_parser.utils.conditions import KeyValueComparator
 from twitch_parser.utils.structures import empty_list_to_none
 
 
-class Scrapper:
+class ActiveStreamsScrapper:
     PAGINATION_MAXIMUM = 100
 
     def __init__(self, twitch_api: Twitch, scrapper_config):
@@ -20,8 +20,7 @@ class Scrapper:
         games = self.twitch_api.get_games(names=list(game_names))['data']
         return [game['id'] for game in games]
 
-    def get_aviable_streams(self):
-        current_viewers = 0
+    def get_available_streams(self):
         twitch_api = self.twitch_api
 
         if self.scrapper_config.language is None:
@@ -56,7 +55,7 @@ class Scrapper:
 
     def get_filtered_streams(self, streams=None):
         if streams is None:
-            streams = self.get_aviable_streams()
+            streams = self.get_available_streams()
         filtered_streams = []
         for stream in streams:
             if self.stream_filter.check_condition(stream):
