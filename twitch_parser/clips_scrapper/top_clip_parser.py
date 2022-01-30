@@ -4,7 +4,7 @@ from twitchAPI.twitch import Twitch
 
 from twitch_parser.game_scrapper.games_scrapper import GamesScrapper
 from twitch_parser.utils.conditions import KeyValueComparator
-from twitch_parser.utils.data_utils import get_now, subsctract_time
+from twitch_parser.utils.data_utils import get_now, subsctract_time, parse_data
 from twitch_parser.utils.numeric_utils import value_or_inf
 from twitch_parser.utils.structures import empty_list_to_none
 
@@ -20,7 +20,7 @@ class TopClipScrapper:
         self.game_names = self.scrapper_config.game_names
         self.max_clips_count = value_or_inf(self.scrapper_config.max_clips_count)
 
-        self.start_time = get_now() if self.scrapper_config.start in ['now', None, 0] else self.scrapper_config.start
+        self.start_time = get_now() if self.scrapper_config.start in ['now', None, 0] else parse_data(self.scrapper_config.start)
         self.end_time = subsctract_time(self.start_time, self.scrapper_config.before_days)
 
     def get_clips(self, broadcaster_ids=None):

@@ -31,7 +31,7 @@ chanels_scrapper:
 clips_scrapper:
   game_names: ["Just Chatting"]
   max_clips_count: null
-  start: now  # In RFC 3339 format on now
+  start: "01/01/22 01:55:19"  # In '%d/%m/%y %H:%M:%S' format on now for ex 18/09/19 01:55:19
   before_days: 10
   conditions:
 
