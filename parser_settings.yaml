@@ -33,5 +33,5 @@ clips_scrapper:
   start: now  # In '%d/%m/%y %H:%M:%S' format on now for ex 18/09/19 01:55:19
   before_days: 30
   conditions:
-    view_count: ">=1"
+    view_count: ">=10"
   #descending: True
