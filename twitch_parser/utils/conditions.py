@@ -17,6 +17,11 @@ def parse_condition(condition: str, default_condition='==', to_type=float):
             return a == b
 
         return equal, to_type(condition[2:])
+    elif '!=' in condition or '<>' in condition:
+        def not_equal(a, b):
+            return a != b
+
+        return not_equal, to_type(condition[2:])
     elif '=' in condition:
         def equal(a, b):
             return a == b
