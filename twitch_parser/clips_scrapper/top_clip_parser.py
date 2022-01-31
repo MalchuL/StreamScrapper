@@ -56,6 +56,9 @@ class TopClipScrapper:
             else:
                 if len(clips) == 0:
                     logging.error(f'No clips was founded for broadcaster {broadcaster_ids}')
+                else:
+                    logging.debug(
+                        f'fetched {len(clips)} clips, clips with {part_clips["data"][0] if len(part_clips["data"]) else []}')
                 break
             logging.debug(f'fetched {len(clips)} clips, clips with {part_clips["data"][0] if len(part_clips["data"]) else []}')
 

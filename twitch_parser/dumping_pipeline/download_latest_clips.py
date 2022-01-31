@@ -1,6 +1,9 @@
+import asyncio
 import json
 import logging
 import os.path
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
 
 from tqdm import tqdm
 from twitchAPI import Twitch
@@ -12,8 +15,9 @@ from twitch_parser.streams_scrapper.active_streams_scrapper import ActiveStreams
 
 
 class LatestClipsDownloader:
-    CLIPS_BY_USER_PAGINATION = 1
-    def __init__(self, twitch_api: Twitch, pipeline_config, output_folder='clips_output'):
+    CLIPS_BY_USER_PAGINATION = 10
+    def __init__(self, twitch_api: Twitch, pipeline_config, output_folder='clips_output', num_workers=10):
+        self.num_workers = num_workers
         self.output_folder = output_folder
         self.streams_parser = ActiveStreamsScrapper(twitch_api, pipeline_config.active_streams_scrapper)
         self.channels_parser = ChannelsScrapper(twitch_api, pipeline_config.chanels_scrapper)
@@ -43,8 +47,13 @@ class LatestClipsDownloader:
         logging.info('Start collecting clips by channels')
         clips = []
         for channel_id in tqdm(tuple(range(0, len(channels), self.CLIPS_BY_USER_PAGINATION))):
-            channels_subset = [channel['id'] for channel in channels[channel_id:channel_id+self.CLIPS_BY_USER_PAGINATION]]
-            clips.extend(self.clips_parser.get_clips(broadcaster_ids=channels_subset))
+            channels_subset = [channel['id'] for channel in
+                               channels[channel_id:channel_id + self.CLIPS_BY_USER_PAGINATION]]
+            with ThreadPoolExecutor(max_workers=self.num_workers) as executor:
+                partials = (partial(self.clips_parser.get_clips, [channel_id]) for channel_id in channels_subset)
+                futures = [executor.submit(fn) for fn in partials]
+            for user_clips in futures:
+                clips.extend(user_clips.result())
             logging.info(f'Clips count is {len(clips)}')
         logging.info(f'Clips count is {len(clips)}')
         logging.info(f'Start downloading')
