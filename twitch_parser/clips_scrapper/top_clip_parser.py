@@ -10,7 +10,7 @@ from twitch_parser.utils.structures import empty_list_to_none
 
 
 class TopClipScrapper:
-    PAGINATION_MAXIMUM = 20
+    PAGINATION_MAXIMUM = 1  # More than this value will not return any result except first streamer
 
     def __init__(self, twitch_api: Twitch, scrapper_config):
         self.scrapper_config = scrapper_config
