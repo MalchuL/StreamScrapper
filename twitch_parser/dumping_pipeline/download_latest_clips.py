@@ -23,6 +23,9 @@ class LatestClipsDownloader:
         logging.info('Start collecting streams')
         streams = self.streams_parser.get_filtered_streams()
         assert len(streams) > 0
+
+        if not os.path.exists(self.output_folder):
+            os.makedirs(self.output_folder)
         with open(os.path.join(self.output_folder, "streams_data.json"), "w") as streams_data:
             json.dump(streams, streams_data, indent=4, sort_keys=True)
         logging.info(f'Finish collecting streams, actual size {len(streams)}')
@@ -46,10 +49,15 @@ class LatestClipsDownloader:
         logging.info(f'Start downloading')
         with open(os.path.join(self.output_folder, "conc_clips_data.json"), "w") as clips_data:
             json.dump(clips, clips_data, indent=4, sort_keys=True)
+        output_clips = []
         for clip in clips:
-            try:
-                self.downloader.download(clip['id'], self.output_folder)
-            except Exception as e:
-                print(e)
+
+            out_path = self.downloader.download(clip['id'], self.output_folder)
+            clip['out_path'] = out_path
+            output_clips.append(clip)
+        with open(os.path.join(self.output_folder, "dumped_clips_data.json"), "w") as clips_data:
+            json.dump(clips, clips_data, indent=4, sort_keys=True)
+
+
 
 
