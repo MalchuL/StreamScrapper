@@ -11,7 +11,7 @@ class TwitchDownloader:
     class TwitchDLArgs:
         start = None
         end = None
-        overwrite = False
+        overwrite = True
         max_workers = 1
         no_join = True
         keep = False
