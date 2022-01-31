@@ -10,7 +10,7 @@ from twitch_parser.utils.structures import empty_list_to_none
 
 
 class TopClipScrapper:
-    PAGINATION_MAXIMUM = 1  # More than this value will not return any result except first streamer
+    PAGINATION_MAXIMUM = 20  # More than this value will not return any result except first streamer
 
     def __init__(self, twitch_api: Twitch, scrapper_config):
         self.scrapper_config = scrapper_config
@@ -57,7 +57,7 @@ class TopClipScrapper:
                 if len(clips) == 0:
                     logging.error(f'No clips was founded for broadcaster {broadcaster_ids}')
                 break
-            logging.debug(f'fetched {len(clips)} clips, clips with {part_clips["data"][0]}')
+            logging.debug(f'fetched {len(clips)} clips, clips with {part_clips["data"][0] if len(part_clips["data"]) else []}')
 
         filtered_clips = []
         for clip in clips:

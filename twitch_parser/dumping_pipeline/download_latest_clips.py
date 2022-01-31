@@ -2,6 +2,7 @@ import json
 import logging
 import os.path
 
+from tqdm import tqdm
 from twitchAPI import Twitch
 
 from twitch_parser.channels_scapper.channels_scrapper import ChannelsScrapper
@@ -11,8 +12,8 @@ from twitch_parser.streams_scrapper.active_streams_scrapper import ActiveStreams
 
 
 class LatestClipsDownloader:
-    def __init__(self, twitch_api: Twitch, pipeline_config, output_folder='clips_output', pagination=10):
-        self.pagination = pagination
+    CLIPS_BY_USER_PAGINATION = 1
+    def __init__(self, twitch_api: Twitch, pipeline_config, output_folder='clips_output'):
         self.output_folder = output_folder
         self.streams_parser = ActiveStreamsScrapper(twitch_api, pipeline_config.active_streams_scrapper)
         self.channels_parser = ChannelsScrapper(twitch_api, pipeline_config.chanels_scrapper)
@@ -41,8 +42,8 @@ class LatestClipsDownloader:
         # In twitch we have some bugs with clips downloading I recommend pass single broadcaster
         logging.info('Start collecting clips by channels')
         clips = []
-        for channel_id in range(0, len(channels), self.pagination):
-            channels_subset = [channel['id'] for channel in channels[channel_id:channel_id+self.pagination]]
+        for channel_id in tqdm(tuple(range(0, len(channels), self.CLIPS_BY_USER_PAGINATION))):
+            channels_subset = [channel['id'] for channel in channels[channel_id:channel_id+self.CLIPS_BY_USER_PAGINATION]]
             clips.extend(self.clips_parser.get_clips(broadcaster_ids=channels_subset))
             logging.info(f'Clips count is {len(clips)}')
         logging.info(f'Clips count is {len(clips)}')
@@ -50,7 +51,7 @@ class LatestClipsDownloader:
         with open(os.path.join(self.output_folder, "conc_clips_data.json"), "w") as clips_data:
             json.dump(clips, clips_data, indent=4, sort_keys=True)
         output_clips = []
-        for clip in clips:
+        for clip in tqdm(clips):
 
             out_path = self.downloader.download(clip['id'], self.output_folder)
             clip['out_path'] = out_path
