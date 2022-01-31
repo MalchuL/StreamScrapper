@@ -17,6 +17,7 @@ active_streams_scrapper:
 #    user_login: 'aslan_yan'
 #    user_name: 'aslan_yan'
     viewer_count: <50
+    duration_minutes: ">10" # Additional field
 
 
   #descending: True

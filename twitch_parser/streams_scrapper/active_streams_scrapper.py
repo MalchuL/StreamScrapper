@@ -4,6 +4,7 @@ from twitchAPI.twitch import Twitch
 
 from twitch_parser.game_scrapper.games_scrapper import GamesScrapper
 from twitch_parser.utils.conditions import KeyValueComparator
+from twitch_parser.utils.data_utils import get_now, get_date_object
 from twitch_parser.utils.numeric_utils import value_or_inf
 from twitch_parser.utils.structures import empty_list_to_none
 
@@ -43,6 +44,14 @@ class ActiveStreamsScrapper:
 
             part_streams = twitch_api.get_streams(after=cursor, game_id=game_names, language=languages,
                                                   first=self.PAGINATION_MAXIMUM)
+
+            # Add duration field
+            start_time = get_now()
+            for part_stream in part_streams['data']:
+                stream_duration = start_time - get_date_object(part_stream['started_at'])
+                duration_minutes = stream_duration.seconds / 60
+                part_stream['duration_minutes'] = duration_minutes
+
             streams.extend(part_streams['data'])
             if 'cursor' in part_streams['pagination']:
                 cursor = part_streams['pagination']['cursor']

@@ -1,5 +1,8 @@
 from datetime import datetime, timezone, timedelta
 
+import iso8601
+import rfc3339
+
 
 def get_now():
     local_time = datetime.now(timezone.utc).astimezone()
@@ -15,6 +18,13 @@ def subsctract_time(time, days=0, seconds=0, microseconds=0,
 
 def parse_data(data_str):
     return datetime.strptime(data_str, '%d/%m/%y %H:%M:%S').astimezone(timezone.utc)
+
+def get_date_object(date_string):
+  return iso8601.parse_date(date_string)
+
+def parse_rfc3339(string):
+    return rfc3339.rfc3339(get_date_object(string))
+
 
 if __name__ == '__main__':
     now = get_now()

@@ -4,6 +4,8 @@ import twitchdl
 from twitchdl import utils
 from twitchdl.commands.download import download, _video_target_filename, _clip_target_filename
 from twitchdl import twitch
+from twitchdl.exceptions import ConsoleError
+
 
 class TwitchDownloader:
     def __init__(self, quality='source'):
@@ -46,7 +48,13 @@ class TwitchDownloader:
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
             args.output = os.path.join(output_folder, args.output)
-        download(args)
+        try:
+            download(args)
+        except ConsoleError as e:
+            if video_id in str(e) and 'not found' in str(e):
+                return None
+            else:
+                raise
         return self.get_output_filename(video_id)
 
 if __name__ == '__main__':

@@ -54,8 +54,9 @@ class LatestClipsDownloader:
         for clip in tqdm(clips):
 
             out_path = self.downloader.download(clip['id'], self.output_folder)
-            clip['out_path'] = out_path
-            output_clips.append(clip)
+            if out_path is not None:
+                clip['out_path'] = out_path
+                output_clips.append(clip)
         with open(os.path.join(self.output_folder, "dumped_clips_data.json"), "w") as clips_data:
             json.dump(clips, clips_data, indent=4, sort_keys=True)
 
