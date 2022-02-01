@@ -62,7 +62,7 @@ class LatestClipsDownloader:
         output_clips = []
         for clip in tqdm(clips):
 
-            out_path = self.downloader.download(clip['id'], self.output_folder)
+            out_path = self.downloader.download(clip['id'], os.path.join(self.output_folder, clip['broadcaster_name']))
             if out_path is not None:
                 clip['out_path'] = out_path
                 output_clips.append(clip)
