@@ -13,3 +13,5 @@ Instruction from https://dev.twitch.tv/docs/api
    4. Get secret from the same page (you can create new). for ex `qtln7njjnj5gfh56havk7pmzkbl3qc`
    5. Output will be acess token. for ex. `8wcldc5fo3e2456456sy94owlq8r`
 
+
+install `sudo apt install ubuntu-restricted-extras`

@@ -24,8 +24,12 @@ class TwitchDownloader:
 
 
     # video can be url, clip_id, video_id
-    def get_output_filename(self, video):
+    def get_output_filename(self, video, output_folder=None):
         args = self._create_args(video)
+        if output_folder is not None:
+            if not os.path.exists(output_folder):
+                os.makedirs(output_folder)
+            args.output = os.path.join(output_folder, args.output)
         video_id = utils.parse_video_identifier(video)
         if video_id:
             return _video_target_filename(video, args)
@@ -55,7 +59,7 @@ class TwitchDownloader:
                 return None
             else:
                 raise
-        return self.get_output_filename(video_id)
+        return self.get_output_filename(video_id, output_folder=output_folder)
 
 if __name__ == '__main__':
     downloader = TwitchDownloader()
