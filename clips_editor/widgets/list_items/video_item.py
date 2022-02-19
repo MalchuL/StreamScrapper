@@ -4,7 +4,23 @@ from PyQt5.QtWidgets import QListWidget, QAbstractItemView, QPushButton, QListWi
 
 
 class VideoItem(QListWidgetItem):
-    def __init__(self, text, parent=None):
+    def __init__(self, text, id, streamer_name, clip_title, mp4name, vid_duration, parent=None):
         super(VideoItem, self).__init__(text, parent)
+
+        self.id = id
+        self.streamer_name = streamer_name
+        self.mp4 = mp4name
+        self.clip_name = clip_title
+        self.vid_duration = vid_duration
+        self.upload = False
+        self.isIntro = False
+        self.isOutro = False
+        self.isInterval = False
+        self.isUsed = False
+        self.audio = 1
+        # Getting duration of video clips to trim a percentage of the beginning off
+        self.start_cut = 0
+        self.end_cut = 0
+
         
 

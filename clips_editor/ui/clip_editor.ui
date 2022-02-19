@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1049</width>
+    <width>1072</width>
     <height>775</height>
    </rect>
   </property>
@@ -14,34 +14,178 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="ThumbListWidget" name="videoList">
+   <widget class="ThumbListWidget" name="clipsList">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>421</width>
-      <height>561</height>
+      <width>311</width>
+      <height>571</height>
      </rect>
     </property>
    </widget>
+   <widget class="VideoWidget" name="clipWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>40</y>
+      <width>661</width>
+      <height>451</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSlider" name="volumelSlider">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>620</y>
+      <width>160</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>200</number>
+    </property>
+    <property name="value">
+     <number>100</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>590</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Volume</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Clips</string>
+    </property>
+   </widget>
+   <widget class="QRangeSlider" name="rangeSlider" native="true">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>550</y>
+      <width>651</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>520</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Clip range</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>610</y>
+      <width>92</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Keep clip</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="deleteButton">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>600</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Delete Video</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="baseFolderEdit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>640</y>
+      <width>311</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>620</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Base Clips Folder</string>
+    </property>
+   </widget>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1049</width>
+     <width>1072</width>
      <height>22</height>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open Clips Json...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>ThumbListWidget</class>
    <extends>QListWidget</extends>
    <header>clips_editor.widgets.list_widgets.thumb_list_widget</header>
+  </customwidget>
+  <customwidget>
+   <class>VideoWidget</class>
+   <extends>QWidget</extends>
+   <header>clips_editor.widgets.video_widgets.video_widget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QRangeSlider</class>
+   <extends>QWidget</extends>
+   <header>clips_editor.widgets.range_slider.range_slider</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -8,7 +8,7 @@ class ThumbListWidget(QListWidget):
         super(ThumbListWidget, self).__init__(parent)
         self.setIconSize(QSize(124, 124))
         self.setDragDropMode(QAbstractItemView.DragDrop)
-        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
         self.setDefaultDropAction(Qt.DropAction.MoveAction)
         self.setAcceptDrops(True)
 

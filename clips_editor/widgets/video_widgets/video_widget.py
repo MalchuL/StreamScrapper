@@ -16,7 +16,7 @@ import sys
 
 
 
-class VideoWindow(QWidget):
+class VideoWidget(QWidget):
     """ Class:
     Video player window.
     """
@@ -29,9 +29,9 @@ class VideoWindow(QWidget):
         Setup user interface of Video player window.
         """
 
-        super(VideoWindow, self).__init__(parent)
+        super(VideoWidget, self).__init__(parent)
         self.setWindowTitle("Video player")
-        self.resize(VideoWindow.WIN_SIZE[0], VideoWindow.WIN_SIZE[1])
+        self.resize(VideoWidget.WIN_SIZE[0], VideoWidget.WIN_SIZE[1])
         self.setWindowIcon(
             self.style().standardIcon(QStyle.SP_DriveDVDIcon))
 
@@ -94,8 +94,8 @@ class VideoWindow(QWidget):
         self.video_player.durationChanged.connect(self.duration_changed)
         self.video_player.error.connect(self.error_control)
 
-        QShortcut(Qt.Key_Up, self, self.arrow_up)
-        QShortcut(Qt.Key_Down, self, self.arrow_down)
+        #QShortcut(Qt.Key_Up, self, self.arrow_up)
+        #QShortcut(Qt.Key_Down, self, self.arrow_down)
         QShortcut(Qt.Key_Left, self, self.arrow_left_event)
         QShortcut(Qt.Key_Right, self, self.arrow_right_event)
         QShortcut(Qt.Key_Space, self, self.play_video)
@@ -249,7 +249,7 @@ if __name__ == '__main__':
     if app is None:
         app = QtWidgets.QApplication(sys.argv)
 
-    player = VideoWindow()
+    player = VideoWidget()
     player.show()
 
     """
