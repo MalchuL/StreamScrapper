@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut, QC
 
 from clips_editor.widgets.list_items.video_item import VideoItem
 from clips_editor.widgets.list_widgets.thumb_list_widget import ThumbListWidget
+from clips_editor.widgets.range_slider.range_slider import QRangeSlider
 from clips_editor.widgets.video_widgets.video_widget import VideoWidget
 
 
@@ -26,14 +27,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clipWidget: VideoWidget  # Widget which holds current video
         self.keepClip: QCheckBox  # Checkbox which keep current video
         self.volumeSlider: QSlider
+        self.rangeSlider: QRangeSlider
         # Code from https://gist.github.com/Orizzu/e47393efe37c9e4846f7c23f2b10c4a7
         self.clipsList.currentItemChanged.connect(self.on_clip_click)
         self.keepClip.stateChanged.connect(self.keep_clip_check)
         self.volumeSlider.valueChanged.connect(self.set_volume)
 
+        self.rangeSlider.startValueChanged.connect(self.start_cut_changed)
+        self.rangeSlider.endValueChanged.connect(self.end_cut_changed)
+
         # Arrows
         QShortcut(Qt.Key_Up, self, self.prev_video)
         QShortcut(Qt.Key_Down, self, self.next_video)
+
+    def start_cut_changed(self, value):
+        if self.clipsList.currentItem() is not None:
+            self.clipsList.currentItem().start_cut = value
+
+    def end_cut_changed(self, value):
+        if self.clipsList.currentItem() is not None:
+            self.clipsList.currentItem().end_cut = value
 
     def set_volume(self, value):
         # Set volume in item
@@ -75,7 +88,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.volumeSlider.setValue(item.volume * 100)
             self.durationLabel.setText(f'Duration: {item.vid_duration}')
             self.keepClip.setChecked(item.isUsed)
-            print(item.clip_name)
+
+
+
+            # Draw slider values
+            self.rangeSlider.setMin(0)
+            self.rangeSlider.setMax(item.vid_duration)
+            self.rangeSlider.setStart(item.start_cut)
+            self.rangeSlider.setEnd(item.end_cut)
+            self.rangeSlider.setDrawValues(True)
+            self.rangeSlider.update()
+
 
 
     def generate_menu_bar(self):

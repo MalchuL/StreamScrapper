@@ -20,7 +20,7 @@ class VideoItem(QListWidgetItem):
         self.volume = 1
         # Getting duration of video clips to trim a percentage of the beginning off
         self.start_cut = 0
-        self.end_cut = 0
+        self.end_cut = self.vid_duration
 
         self.keep_video(self.isUsed)
 

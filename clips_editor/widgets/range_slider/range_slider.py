@@ -32,7 +32,7 @@ QRangeSlider > QSplitter::handle:pressed {
 """
 
 def scale(val, src, dst):
-    return int(((val - src[0]) / float(src[1]-src[0])) * (dst[1]-dst[0]) + dst[0])
+    return float(((val - src[0]) / float(src[1]-src[0])) * (dst[1]-dst[0]) + dst[0])
 
 
 class Ui_Form(object):
@@ -100,7 +100,7 @@ class Head(Element):
     def drawText(self, event, qp):
         qp.setPen(self.textColor())
         qp.setFont(QtGui.QFont('Arial', 10))
-        qp.drawText(event.rect(), QtCore.Qt.AlignLeft, str(self.main.min()))
+        qp.drawText(event.rect(), QtCore.Qt.AlignLeft, f'{self.main.min():.1f}')
 
 
 class Tail(Element):
@@ -110,7 +110,7 @@ class Tail(Element):
     def drawText(self, event, qp):
         qp.setPen(self.textColor())
         qp.setFont(QtGui.QFont('Arial', 10))
-        qp.drawText(event.rect(), QtCore.Qt.AlignRight, str(self.main.max()))
+        qp.drawText(event.rect(), QtCore.Qt.AlignRight, f'{self.main.max():.1f}')
 
 
 class Handle(Element):
@@ -120,8 +120,8 @@ class Handle(Element):
     def drawText(self, event, qp):
         qp.setPen(self.textColor())
         qp.setFont(QtGui.QFont('Arial', 10))
-        qp.drawText(event.rect(), QtCore.Qt.AlignLeft, str(self.main.start()))
-        qp.drawText(event.rect(), QtCore.Qt.AlignRight, str(self.main.end()))
+        qp.drawText(event.rect(), QtCore.Qt.AlignLeft, f'{self.main.start():.1f}')
+        qp.drawText(event.rect(), QtCore.Qt.AlignRight, f'{self.main.end():.1f}')
 
     def mouseMoveEvent(self, event):
         event.accept()
@@ -147,14 +147,14 @@ class Handle(Element):
 
 
 class QRangeSlider(QtWidgets.QWidget, Ui_Form):
-    endValueChanged = QtCore.pyqtSignal(int)
-    maxValueChanged = QtCore.pyqtSignal(int)
-    minValueChanged = QtCore.pyqtSignal(int)
-    startValueChanged = QtCore.pyqtSignal(int)
-    minValueChanged = QtCore.pyqtSignal(int)
-    maxValueChanged = QtCore.pyqtSignal(int)
-    startValueChanged = QtCore.pyqtSignal(int)
-    endValueChanged = QtCore.pyqtSignal(int)
+    endValueChanged = QtCore.pyqtSignal(float)
+    maxValueChanged = QtCore.pyqtSignal(float)
+    minValueChanged = QtCore.pyqtSignal(float)
+    startValueChanged = QtCore.pyqtSignal(float)
+    minValueChanged = QtCore.pyqtSignal(float)
+    maxValueChanged = QtCore.pyqtSignal(float)
+    startValueChanged = QtCore.pyqtSignal(float)
+    endValueChanged = QtCore.pyqtSignal(float)
 
     _SPLIT_START = 1
     _SPLIT_END = 2
