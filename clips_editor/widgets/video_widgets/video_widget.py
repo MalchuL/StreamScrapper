@@ -108,6 +108,10 @@ class VideoWidget(QWidget):
         if self.video_player.state() != QMediaPlayer.StoppedState:
             self.video_player.setVolume(max(self.video_player.volume() - 10, 0))
 
+    def set_volume(self, volume):
+        if self.video_player.state() != QMediaPlayer.StoppedState:
+            self.video_player.setVolume(volume)
+
     def arrow_left_event(self):
         """ Slot function:
         Action after the key 'arrow left' is pressed.

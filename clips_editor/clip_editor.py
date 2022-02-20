@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets, uic
 import sys
 
 from PyQt5.QtCore import QDir, Qt, QModelIndex, QAbstractItemModel
-from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut
+from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut, QCheckBox, QSlider
 
 from clips_editor.widgets.list_items.video_item import VideoItem
 from clips_editor.widgets.list_widgets.thumb_list_widget import ThumbListWidget
@@ -22,18 +22,31 @@ class MainWindow(QtWidgets.QMainWindow):
         uic.loadUi('clips_editor/ui/clip_editor.ui', self)
         self.generate_menu_bar()
 
-        self.clipsList: ThumbListWidget
-        self.clipWidget: VideoWidget
-        #self.clipsList.
+        self.clipsList: ThumbListWidget  # List with clips, ALL INFO HOLDS HERE
+        self.clipWidget: VideoWidget  # Widget which holds current video
+        self.keepClip: QCheckBox  # Checkbox which keep current video
+        self.volumeSlider: QSlider
         # Code from https://gist.github.com/Orizzu/e47393efe37c9e4846f7c23f2b10c4a7
         self.clipsList.currentItemChanged.connect(self.on_clip_click)
-
-
+        self.keepClip.stateChanged.connect(self.keep_clip_check)
+        self.volumeSlider.valueChanged.connect(self.set_volume)
 
         # Arrows
         QShortcut(Qt.Key_Up, self, self.prev_video)
         QShortcut(Qt.Key_Down, self, self.next_video)
 
+    def set_volume(self, value):
+        # Set volume in item
+        if self.clipsList.currentItem() is not None:
+            self.clipsList.currentItem().volume = value / 100
+        self.clipWidget.set_volume(value)
+
+
+
+    def keep_clip_check(self, state):
+        #print(state, self.keepClip.isChecked())
+        if self.clipsList.currentItem() is not None:
+            self.clipsList.currentItem().keep_video(self.keepClip.isChecked())
 
     def prev_video(self):
         current_index = self.clipsList.currentIndex().row()
@@ -50,8 +63,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def on_clip_click(self, item: VideoItem, old_item=None):
-        self.clipWidget.open_video(item.mp4)
-        print(item.clip_name)
+        self.update_video_editor(item)
+        self.update_global_info()
+
+    def update_global_info(self):
+        self.clipsCountLabel.setText(f'Clips: {self.clipsList.currentIndex().row() + 1}/{self.clipsList.count()}')
+
+    def update_video_editor(self, item: VideoItem):
+        if item is not None:
+            self.clipWidget.open_video(item.mp4)
+            self.volumeSlider.setValue(item.volume * 100)
+            self.durationLabel.setText(f'Duration: {item.vid_duration}')
+            self.keepClip.setChecked(item.isUsed)
+            print(item.clip_name)
+
 
     def generate_menu_bar(self):
         load_act = QAction('&Open Clips Json...', self)
@@ -59,9 +84,15 @@ class MainWindow(QtWidgets.QMainWindow):
         load_act.setStatusTip('Loads to UI clips json which generates with additional output field')
         load_act.triggered.connect(self.load_clips_json)
 
+        clear_act = QAction('&Clear List', self)
+        clear_act.setShortcut('Ctrl+L')
+        clear_act.setStatusTip('Clears list of clips')
+        clear_act.triggered.connect(self.clipsList.clear)
+
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(load_act)
+        fileMenu.addAction(clear_act)
 
     def load_clips_json(self):
         print('Try to open json file')

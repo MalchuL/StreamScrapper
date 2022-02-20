@@ -17,10 +17,17 @@ class VideoItem(QListWidgetItem):
         self.isOutro = False
         self.isInterval = False
         self.isUsed = False
-        self.audio = 1
+        self.volume = 1
         # Getting duration of video clips to trim a percentage of the beginning off
         self.start_cut = 0
         self.end_cut = 0
 
-        
+        self.keep_video(self.isUsed)
+
+    def keep_video(self, keep):
+        self.isUsed = keep
+        if keep:
+            self.setForeground(Qt.green)
+        else:
+            self.setForeground(Qt.red)
 
