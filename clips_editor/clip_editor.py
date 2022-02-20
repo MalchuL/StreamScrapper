@@ -188,12 +188,13 @@ class MainWindow(QtWidgets.QMainWindow):
             json_clips = ujson.load(f)
 
         for clip in json_clips:
-            clip_name = clip['broadcaster_name'] + '/' + clip['title']
-            video_item = VideoItem(text=clip_name, id=clip['id'], streamer_name=clip['broadcaster_name'],
-                                             clip_title=clip['title'],
-                                             mp4name=os.path.join(base_folder, clip['out_path']),
-                                             vid_duration=clip['duration'])
-            self.clipsList.addItem(video_item)
+            if 'out_path' in clip: # Not all videos can be download
+                clip_name = clip['broadcaster_name'] + '/' + clip['title']
+                video_item = VideoItem(text=clip_name, id=clip['id'], streamer_name=clip['broadcaster_name'],
+                                                 clip_title=clip['title'],
+                                                 mp4name=os.path.join(base_folder, clip['out_path']),
+                                                 vid_duration=clip['duration'])
+                self.clipsList.addItem(video_item)
 
 
 
