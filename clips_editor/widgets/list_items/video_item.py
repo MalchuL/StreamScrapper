@@ -4,12 +4,12 @@ from PyQt5.QtWidgets import QListWidget, QAbstractItemView, QPushButton, QListWi
 
 
 class VideoItem(QListWidgetItem):
-    def __init__(self, text, id, streamer_name, clip_title, mp4name, vid_duration, parent=None):
+    def __init__(self, text, id, streamer_name, clip_title, filename, vid_duration, parent=None):
         super(VideoItem, self).__init__(text, parent)
 
         self.id = id
         self.streamer_name = streamer_name
-        self.mp4 = mp4name
+        self.filename = filename
         self.clip_name = clip_title
         self.vid_duration = vid_duration
         self.upload = False

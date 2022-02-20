@@ -149,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_video_editor(self, item: VideoItem):
         if item is not None:
-            self.clipWidget.open_video(item.mp4)
+            self.clipWidget.open_video(item.filename)
             self.volumeSlider.setValue(item.volume * 100)
             self.durationLabel.setText(f'Duration: {item.vid_duration}')
             self.keepClip.setChecked(item.isUsed)
@@ -213,9 +213,9 @@ class MainWindow(QtWidgets.QMainWindow):
             if 'out_path' in clip: # Not all videos can be download
                 clip_name = clip['broadcaster_name'] + '/' + clip['title']
                 video_item = VideoItem(text=clip_name, id=clip['id'], streamer_name=clip['broadcaster_name'],
-                                                 clip_title=clip['title'],
-                                                 mp4name=os.path.join(base_folder, clip['out_path']),
-                                                 vid_duration=clip['duration'])
+                                       clip_title=clip['title'],
+                                       filename=os.path.join(base_folder, clip['out_path']),
+                                       vid_duration=clip['duration'])
                 self.clipsList.addItem(video_item)
 
 
