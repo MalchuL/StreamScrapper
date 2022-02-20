@@ -118,7 +118,7 @@ class VideoWidget(QWidget):
         Fast-forward to 10 seconds later.
         """
 
-        self.set_position(self.video_slider.value() - 10 * 1000)
+        self.set_position(self.video_slider.value() - 5 * 1000)
 
     def arrow_right_event(self):
         """ Slot function:
@@ -126,7 +126,7 @@ class VideoWidget(QWidget):
         Go back to 10 seconds ago.
         """
 
-        self.set_position(self.video_slider.value() + 10 * 1000)
+        self.set_position(self.video_slider.value() + 5 * 1000)
 
     def mousePressEvent(self, event):
         """ Slot function:
