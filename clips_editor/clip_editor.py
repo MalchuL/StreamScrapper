@@ -55,7 +55,12 @@ class MainWindow(QtWidgets.QMainWindow):
         QShortcut(Qt.Key_Space, self, self.play_video)
         QShortcut(Qt.Key_Return, self, lambda: self.keepClip.setChecked(True))
 
-        self.load_clips_json(DEFAULT_CLIPS)
+
+        # Todo fix this
+        self._default_clips_path = DEFAULT_CLIPS
+        if DEFAULT_CLIPS is not None:
+            self.load_clips_json()
+            self._default_clips_path = None
 
 
         self._video_pos = 0
@@ -93,6 +98,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.player.pause()
         else:
             item = self.clipsList.currentItem()
+            if item is None:
+                return
             if self._video_pos < item.start_cut * 1000 or self._video_pos > item.end_cut * 1000 or self.player.state() == QMediaPlayer.StoppedState:
                 self.player.setPosition(item.start_cut * 1000)
             self.player.play()
@@ -102,6 +109,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_video_time_position_changed(self, position):
         self._video_pos = position
         item = self.clipsList.currentItem()
+        if item is None:
+            return
         if self.player.state() == QtMultimedia.QMediaPlayer.PlayingState:
             if position / 1000 > item.end_cut:
                 self.player.stop()
@@ -128,16 +137,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.keepClip.setPalette(palette)
 
     def prev_video(self):
-        current_index = self.clipsList.currentIndex().row()
-        new_index = current_index - 1
-        if new_index < 0:
-            new_index = self.clipsList.count() - 1
-        self.clipsList.setCurrentRow(new_index)
+        if self.clipsList.count() > 0:
+            current_index = self.clipsList.currentIndex().row()
+            new_index = current_index - 1
+            if new_index < 0:
+                new_index = self.clipsList.count() - 1
+            self.clipsList.setCurrentRow(new_index)
 
     def next_video(self):
-        current_index = self.clipsList.currentIndex().row()
-        new_index = (current_index + 1) % self.clipsList.count()
-        self.clipsList.setCurrentRow(new_index)
+        if self.clipsList.count() > 0:
+            current_index = self.clipsList.currentIndex().row()
+            new_index = (current_index + 1) % self.clipsList.count()
+            self.clipsList.setCurrentRow(new_index)
 
 
     def on_clip_click(self, item: VideoItem, old_item=None):
@@ -197,13 +208,17 @@ class MainWindow(QtWidgets.QMainWindow):
         fileMenu.addAction(load_act)
         fileMenu.addAction(clear_act)
 
-    def load_clips_json(self, path=None):
+    def load_clips_json(self):
         print('Try to open json file')
+        path = self._default_clips_path
         if path is None:
             json_path, _ = QFileDialog.getOpenFileName(self, "Open Clips Json",
                                                         QDir.currentPath(), options=QFileDialog.DontUseNativeDialog)
         else:
             json_path = path
+        print(f'Opens {json_path} path')
+        if json_path is None or json_path == '' or json_path==False :
+            return
         base_folder = os.path.abspath(os.curdir) #os.path.dirname(json_path)
         self.baseFolderEdit.setText(base_folder)
         with open(json_path, 'r') as f:
