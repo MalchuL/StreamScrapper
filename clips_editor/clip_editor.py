@@ -114,6 +114,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.player.state() == QtMultimedia.QMediaPlayer.PlayingState:
             if position / 1000 > item.end_cut:
                 self.player.stop()
+            self.videoTime.setText(f'Time: {position / 1000}')
 
     def set_volume(self, value):
         # Set volume in item
