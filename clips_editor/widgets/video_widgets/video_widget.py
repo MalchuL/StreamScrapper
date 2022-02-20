@@ -98,7 +98,7 @@ class VideoWidget(QWidget):
         #QShortcut(Qt.Key_Down, self, self.arrow_down)
         QShortcut(Qt.Key_Left, self, self.arrow_left_event)
         QShortcut(Qt.Key_Right, self, self.arrow_right_event)
-        QShortcut(Qt.Key_Space, self, self.play_video)
+        #QShortcut(Qt.Key_Space, self, self.play_video)
 
     def arrow_up(self):
         if self.video_player.state() != QMediaPlayer.StoppedState:

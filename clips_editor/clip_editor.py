@@ -1,12 +1,14 @@
 import os.path
 
 import ujson
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic, QtMultimedia
 
 import sys
 
 from PyQt5.QtCore import QDir, Qt, QModelIndex, QAbstractItemModel
+from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut, QCheckBox, QSlider
+from PyQt5 import QtCore
 
 from clips_editor.widgets.list_items.video_item import VideoItem
 from clips_editor.widgets.list_widgets.thumb_list_widget import ThumbListWidget
@@ -14,7 +16,11 @@ from clips_editor.widgets.range_slider.range_slider import QRangeSlider
 from clips_editor.widgets.video_widgets.video_widget import VideoWidget
 
 
+DEFAULT_CLIPS = '/home/malchul/work/streams/stream_parser/twitch_clips_new/dumped_clips_data.json'
+
 class MainWindow(QtWidgets.QMainWindow):
+
+    ON_RANGE_CHANGE_OFFSET = 2 # Seconds to move video after clip range changed
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -36,17 +42,67 @@ class MainWindow(QtWidgets.QMainWindow):
         self.rangeSlider.startValueChanged.connect(self.start_cut_changed)
         self.rangeSlider.endValueChanged.connect(self.end_cut_changed)
 
+        self.player = self.clipWidget.video_player
+        self.player.positionChanged.connect(self.on_video_time_position_changed)
+        self.player.setNotifyInterval(10) # Calls positionChanged each 10 ms
+        self.clipWidget.button_play.clicked.disconnect()  # Disconnect base player button signals
+        self.clipWidget.button_play.clicked.connect(self.play_video)
+
         # Arrows
         QShortcut(Qt.Key_Up, self, self.prev_video)
         QShortcut(Qt.Key_Down, self, self.next_video)
+        QShortcut(Qt.Key_Space, self, self.play_video)
+
+        self.load_clips_json(DEFAULT_CLIPS)
+
+
+        self._video_pos = 0
 
     def start_cut_changed(self, value):
-        if self.clipsList.currentItem() is not None:
-            self.clipsList.currentItem().start_cut = value
+        item = self.clipsList.currentItem()
+        if item is not None:
+            item.start_cut = value
+            self.start_play(item.start_cut)
 
     def end_cut_changed(self, value):
-        if self.clipsList.currentItem() is not None:
-            self.clipsList.currentItem().end_cut = value
+        item = self.clipsList.currentItem()
+        if item is not None:
+            item.end_cut = value
+            self.start_play(item.end_cut - self.ON_RANGE_CHANGE_OFFSET)
+
+    def start_play(self, play_at):
+        """
+            path: path of video
+            start: time in ms from where the playback starts
+            end: time in ms where playback ends
+        """
+        self.player.stop()
+        self.player.setPosition(play_at * 1000)
+        self.player.play()
+
+    def play_video(self):
+        """ Slot function:
+        The slot function for the 'play' button.
+        If the video player is currently paused, then play the video;
+        otherwise, pause the video.
+        """
+
+        if self.player.state() == QMediaPlayer.PlayingState:
+            self.player.pause()
+        else:
+            item = self.clipsList.currentItem()
+            if self._video_pos < item.start_cut * 1000 or self._video_pos > item.end_cut * 1000 or self.player.state() == QMediaPlayer.StoppedState:
+                self.player.setPosition(item.start_cut * 1000)
+            self.player.play()
+
+
+    @QtCore.pyqtSlot('qint64')
+    def on_video_time_position_changed(self, position):
+        self._video_pos = position
+        item = self.clipsList.currentItem()
+        if self.player.state() == QtMultimedia.QMediaPlayer.PlayingState:
+            if position / 1000 > item.end_cut:
+                self.player.stop()
 
     def set_volume(self, value):
         # Set volume in item
@@ -57,7 +113,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def keep_clip_check(self, state):
-        #print(state, self.keepClip.isChecked())
         if self.clipsList.currentItem() is not None:
             self.clipsList.currentItem().keep_video(self.keepClip.isChecked())
 
@@ -71,7 +126,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def next_video(self):
         current_index = self.clipsList.currentIndex().row()
         new_index = (current_index + 1) % self.clipsList.count()
-        print(new_index)
         self.clipsList.setCurrentRow(new_index)
 
 
@@ -89,15 +143,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.durationLabel.setText(f'Duration: {item.vid_duration}')
             self.keepClip.setChecked(item.isUsed)
 
-
-
             # Draw slider values
+
+            # We should disconnect end value changed because it would be called
+            self.rangeSlider.endValueChanged.disconnect()
+
             self.rangeSlider.setMin(0)
             self.rangeSlider.setMax(item.vid_duration)
             self.rangeSlider.setStart(item.start_cut)
             self.rangeSlider.setEnd(item.end_cut)
             self.rangeSlider.setDrawValues(True)
             self.rangeSlider.update()
+            # Connect it back
+            self.rangeSlider.endValueChanged.connect(self.end_cut_changed)
 
 
 
@@ -117,10 +175,13 @@ class MainWindow(QtWidgets.QMainWindow):
         fileMenu.addAction(load_act)
         fileMenu.addAction(clear_act)
 
-    def load_clips_json(self):
+    def load_clips_json(self, path=None):
         print('Try to open json file')
-        json_path, _ = QFileDialog.getOpenFileName(self, "Open Clips Json",
-                                                    QDir.currentPath(), options=QFileDialog.DontUseNativeDialog)
+        if path is None:
+            json_path, _ = QFileDialog.getOpenFileName(self, "Open Clips Json",
+                                                        QDir.currentPath(), options=QFileDialog.DontUseNativeDialog)
+        else:
+            json_path = path
         base_folder = os.path.abspath(os.curdir) #os.path.dirname(json_path)
         self.baseFolderEdit.setText(base_folder)
         with open(json_path, 'r') as f:
