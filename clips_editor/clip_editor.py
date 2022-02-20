@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets, uic, QtMultimedia
 import sys
 
 from PyQt5.QtCore import QDir, Qt, QModelIndex, QAbstractItemModel
+from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut, QCheckBox, QSlider
 from PyQt5 import QtCore
@@ -52,6 +53,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QShortcut(Qt.Key_Up, self, self.prev_video)
         QShortcut(Qt.Key_Down, self, self.next_video)
         QShortcut(Qt.Key_Space, self, self.play_video)
+        QShortcut(Qt.Key_Return, self, lambda: self.keepClip.setChecked(True))
 
         self.load_clips_json(DEFAULT_CLIPS)
 
@@ -115,6 +117,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def keep_clip_check(self, state):
         if self.clipsList.currentItem() is not None:
             self.clipsList.currentItem().keep_video(self.keepClip.isChecked())
+        self.keepClip: QCheckBox
+        palette = self.keepClip.palette()
+
+        if self.keepClip.isChecked():
+            color = QColor(0, 255, 0)
+        else:
+            color = QColor(255, 0, 0)
+        palette.setColor(QPalette.Active, QPalette.Base, color)
+        self.keepClip.setPalette(palette)
 
     def prev_video(self):
         current_index = self.clipsList.currentIndex().row()
@@ -156,6 +167,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.rangeSlider.update()
             # Connect it back
             self.rangeSlider.endValueChanged.connect(self.end_cut_changed)
+
+            # Keep video
+            self.keepClip: QCheckBox
+            palette = self.keepClip.palette()
+
+            if self.keepClip.isChecked():
+                color = QColor(0, 255, 0)
+            else:
+                color = QColor(255, 0, 0)
+            palette.setColor(QPalette.Active, QPalette.Base, color)
+            self.keepClip.setPalette(palette)
 
 
 
