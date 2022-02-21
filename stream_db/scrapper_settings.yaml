@@ -1,0 +1,21 @@
+
+language: ["ru"]
+game_names: ["Just Chatting"]
+max_stream_count: 1000
+conditions:
+  viewer_count: <30
+  duration_minutes: ">10"  # Additional field
+  #    game_id: '509658'
+  #    game_name: 'Just Chatting'
+  #    id: '44542594684'
+  #    is_mature: True
+  #    language: 'ru'
+  #    started_at: '2022-01-29T23:53:48Z'
+  #    tag_ids: [ '0569b171-2a2b-476e-a596-5bdfb45a1327' ]
+  #    thumbnail_url: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_aslan_yan-{width}x{height}.jpg'
+  #    title: 'Ходячие Мертвецы (The Walking Dead)'
+  #    type: 'live'
+  #    user_id: '618722304'
+  #    user_login: 'aslan_yan'
+  #    user_name: 'aslan_yan'
+

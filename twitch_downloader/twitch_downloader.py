@@ -17,7 +17,7 @@ if __name__ == '__main__':
     twitch = Twitch(user_secrets.app_id, user_secrets.app_secret, target_app_auth_scope=[AuthScope.USER_READ_FOLLOWS])
 
 
-    config = get_yaml_config('parser_settings.yaml')
+    config = get_yaml_config('twitch_downloader/parser_settings.yaml')
     pprint(config)
 
     scrapper = LatestClipsDownloader(twitch, config, output_folder='twitch_clips_new')
