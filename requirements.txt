@@ -1,6 +1,7 @@
 twitchAPI==2.5.1
 omegaconf==2.1.1
 twitch-dl==1.18.0
+schedule==1.1.0
 tqdm
 PyQt5
 opencv-python-headless
