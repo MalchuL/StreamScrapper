@@ -22,10 +22,10 @@ class Clip:
 
 
 class VideoItem(QListWidgetItem):
-    def __init__(self, text, id, streamer_name, clip_title, filename, vid_duration, parent=None):
+    def __init__(self, text, clip, parent=None):
         super(VideoItem, self).__init__(text, parent)
 
-        self.clip = Clip(id, streamer_name, clip_title, filename, vid_duration)
+        self.clip = clip
 
         self.keep_video(self.clip.isUsed)
 

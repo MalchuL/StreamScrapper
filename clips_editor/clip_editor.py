@@ -1,4 +1,5 @@
 import os.path
+import pickle
 
 import ujson
 from PyQt5 import QtWidgets, uic, QtMultimedia
@@ -11,7 +12,7 @@ from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut, QCheckBox, QSlider
 from PyQt5 import QtCore
 
-from clips_editor.widgets.list_items.video_item import VideoItem
+from clips_editor.widgets.list_items.video_item import VideoItem, Clip
 from clips_editor.widgets.list_widgets.thumb_list_widget import ThumbListWidget
 from clips_editor.widgets.range_slider.range_slider import QRangeSlider
 from clips_editor.widgets.video_widgets.video_widget import VideoWidget
@@ -204,14 +205,46 @@ class MainWindow(QtWidgets.QMainWindow):
         clear_act.setStatusTip('Clears list of clips')
         clear_act.triggered.connect(self.clipsList.clear)
 
+        save_act = QAction('&Save editor clips', self)
+        clear_act.setShortcut('Ctrl+S')
+        save_act.setStatusTip('Save clips to binary file')
+        save_act.triggered.connect(self.save_clips_to_file)
+
+        load_pickle_act = QAction('&Load editor clips', self)
+        load_pickle_act.setStatusTip('Load clips from binary file')
+        load_pickle_act.triggered.connect(self.load_clips_from_file)
+
+
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(load_act)
         fileMenu.addAction(clear_act)
+        fileMenu.addSeparator()
+        fileMenu.addAction(save_act)
+        fileMenu.addAction(load_pickle_act)
 
-    # def save_preds_to_file(self):
-    #     self.clipsList: ThumbListWidget
-    #     for item in self.clipsList.i
+    def save_clips_to_file(self):
+        self.clipsList: ThumbListWidget
+        dumped_clips = []
+        for i in range(self.clipsList.count()):
+            clip_data = self.clipsList.item(i).clip
+            dumped_clips.append(clip_data)
+
+        name, _ = QFileDialog.getSaveFileName(self, 'Save File', options=QFileDialog.DontUseNativeDialog)
+        with open(name, "wb") as f:
+            pickle.dump(dumped_clips, f)
+        print('Saved object')
+
+    def load_clips_from_file(self):
+        clips_path, _ = QFileDialog.getOpenFileName(self, "Open Clips Json",
+                                                   QDir.currentPath(), options=QFileDialog.DontUseNativeDialog)
+        print(clips_path)
+        with open(clips_path, "rb") as f:
+            dumped_clips = pickle.load(f)
+        for clip in dumped_clips:
+            clip_name = clip.streamer_name + '/' + clip.clip_name
+            video_item = VideoItem(text=clip_name, clip=clip)
+            self.clipsList.addItem(video_item)
 
     def load_clips_json(self):
         print('Try to open json file')
@@ -232,10 +265,11 @@ class MainWindow(QtWidgets.QMainWindow):
         for clip in json_clips:
             if 'out_path' in clip: # Not all videos can be download
                 clip_name = clip['broadcaster_name'] + '/' + clip['title']
-                video_item = VideoItem(text=clip_name, id=clip['id'], streamer_name=clip['broadcaster_name'],
+                clip = Clip(id=clip['id'], streamer_name=clip['broadcaster_name'],
                                        clip_title=clip['title'],
                                        filename=os.path.join(base_folder, clip['out_path']),
                                        vid_duration=clip['duration'])
+                video_item = VideoItem(text=clip_name, clip=clip)
                 self.clipsList.addItem(video_item)
 
 
