@@ -3,10 +3,8 @@ from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QListWidget, QAbstractItemView, QPushButton, QListWidgetItem
 
 
-class VideoItem(QListWidgetItem):
-    def __init__(self, text, id, streamer_name, clip_title, filename, vid_duration, parent=None):
-        super(VideoItem, self).__init__(text, parent)
-
+class Clip:
+    def __init__(self, id, streamer_name, clip_title, filename, vid_duration):
         self.id = id
         self.streamer_name = streamer_name
         self.filename = filename
@@ -22,10 +20,18 @@ class VideoItem(QListWidgetItem):
         self.start_cut = 0
         self.end_cut = self.vid_duration
 
-        self.keep_video(self.isUsed)
+
+class VideoItem(QListWidgetItem):
+    def __init__(self, text, id, streamer_name, clip_title, filename, vid_duration, parent=None):
+        super(VideoItem, self).__init__(text, parent)
+
+        self.clip = Clip(id, streamer_name, clip_title, filename, vid_duration)
+
+        self.keep_video(self.clip.isUsed)
+
 
     def keep_video(self, keep):
-        self.isUsed = keep
+        self.clip.isUsed = keep
         if keep:
             self.setForeground(Qt.green)
         else:

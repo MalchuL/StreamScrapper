@@ -68,14 +68,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def start_cut_changed(self, value):
         item = self.clipsList.currentItem()
         if item is not None:
-            item.start_cut = value
-            self.start_play(item.start_cut)
+            item.clip.start_cut = value
+            self.start_play(item.clip.start_cut)
 
     def end_cut_changed(self, value):
         item = self.clipsList.currentItem()
         if item is not None:
-            item.end_cut = value
-            self.start_play(item.end_cut - self.ON_RANGE_CHANGE_OFFSET)
+            item.clip.end_cut = value
+            self.start_play(item.clip.end_cut - self.ON_RANGE_CHANGE_OFFSET)
 
     def start_play(self, play_at):
         """
@@ -100,8 +100,8 @@ class MainWindow(QtWidgets.QMainWindow):
             item = self.clipsList.currentItem()
             if item is None:
                 return
-            if self._video_pos < item.start_cut * 1000 or self._video_pos > item.end_cut * 1000 or self.player.state() == QMediaPlayer.StoppedState:
-                self.player.setPosition(item.start_cut * 1000)
+            if self._video_pos < item.clip.start_cut * 1000 or self._video_pos > item.clip.end_cut * 1000 or self.player.state() == QMediaPlayer.StoppedState:
+                self.player.setPosition(item.clip.start_cut * 1000)
             self.player.play()
 
 
@@ -112,14 +112,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if item is None:
             return
         if self.player.state() == QtMultimedia.QMediaPlayer.PlayingState:
-            if position / 1000 > item.end_cut:
+            if position / 1000 > item.clip.end_cut:
                 self.player.stop()
             self.videoTime.setText(f'Time: {position / 1000}')
 
     def set_volume(self, value):
         # Set volume in item
         if self.clipsList.currentItem() is not None:
-            self.clipsList.currentItem().volume = value / 100
+            self.clipsList.currentItem().clip.volume = value / 100
         self.clipWidget.set_volume(value)
 
 
@@ -161,10 +161,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_video_editor(self, item: VideoItem):
         if item is not None:
-            self.clipWidget.open_video(item.filename)
-            self.volumeSlider.setValue(item.volume * 100)
-            self.durationLabel.setText(f'Duration: {item.vid_duration}')
-            self.keepClip.setChecked(item.isUsed)
+            self.clipWidget.open_video(item.clip.filename)
+            self.volumeSlider.setValue(item.clip.volume * 100)
+            self.durationLabel.setText(f'Duration: {item.clip.vid_duration}')
+            self.keepClip.setChecked(item.clip.isUsed)
 
             # Draw slider values
 
@@ -172,9 +172,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.rangeSlider.endValueChanged.disconnect()
 
             self.rangeSlider.setMin(0)
-            self.rangeSlider.setMax(item.vid_duration)
-            self.rangeSlider.setStart(item.start_cut)
-            self.rangeSlider.setEnd(item.end_cut)
+            self.rangeSlider.setMax(item.clip.vid_duration)
+            self.rangeSlider.setStart(item.clip.start_cut)
+            self.rangeSlider.setEnd(item.clip.end_cut)
             self.rangeSlider.setDrawValues(True)
             self.rangeSlider.update()
             # Connect it back
@@ -208,6 +208,10 @@ class MainWindow(QtWidgets.QMainWindow):
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(load_act)
         fileMenu.addAction(clear_act)
+
+    # def save_preds_to_file(self):
+    #     self.clipsList: ThumbListWidget
+    #     for item in self.clipsList.i
 
     def load_clips_json(self):
         print('Try to open json file')
