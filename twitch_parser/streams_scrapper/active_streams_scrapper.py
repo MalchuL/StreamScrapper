@@ -39,28 +39,28 @@ class ActiveStreamsScrapper:
 
         logging.debug(
             f'Try to fetch streams with params game_id={game_names}, language={languages}, first={self.PAGINATION_MAXIMUM}')
+        for game_name in game_names:
+            while len(streams) < self.max_stream_count:
 
-        while len(streams) < self.max_stream_count:
+                part_streams = twitch_api.get_streams(after=cursor, game_id=[game_name], language=languages,
+                                                      first=self.PAGINATION_MAXIMUM)
 
-            part_streams = twitch_api.get_streams(after=cursor, game_id=game_names, language=languages,
-                                                  first=self.PAGINATION_MAXIMUM)
+                # Add duration field
+                start_time = get_now()
+                for part_stream in part_streams['data']:
+                    stream_duration = start_time - get_date_object(part_stream['started_at'])
+                    duration_minutes = stream_duration.seconds / 60
+                    part_stream['duration_minutes'] = duration_minutes
 
-            # Add duration field
-            start_time = get_now()
-            for part_stream in part_streams['data']:
-                stream_duration = start_time - get_date_object(part_stream['started_at'])
-                duration_minutes = stream_duration.seconds / 60
-                part_stream['duration_minutes'] = duration_minutes
-
-            streams.extend(part_streams['data'])
-            if 'cursor' in part_streams['pagination']:
-                cursor = part_streams['pagination']['cursor']
-            else:
-                if len(streams) == 0:
-                    raise RuntimeError(f'Cannot fetch any stream, data was returned={part_streams}')
+                streams.extend(part_streams['data'])
+                if 'cursor' in part_streams['pagination']:
+                    cursor = part_streams['pagination']['cursor']
                 else:
-                    break
-            logging.debug(f'fetched {len(streams)} streams, streams with {part_streams["data"][0]}')
+                    if len(streams) == 0:
+                        raise RuntimeError(f'Cannot fetch any stream, data was returned={part_streams}')
+                    else:
+                        break
+                logging.debug(f'fetched {len(streams)} streams, streams with {part_streams["data"][0]}')
         return streams
 
     def get_filtered_streams(self, streams=None):
