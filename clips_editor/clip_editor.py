@@ -230,7 +230,9 @@ class MainWindow(QtWidgets.QMainWindow):
             clip_data = self.clipsList.item(i).clip
             dumped_clips.append(clip_data)
 
-        name, _ = QFileDialog.getSaveFileName(self, 'Save File', options=QFileDialog.DontUseNativeDialog)
+        name, _ = QFileDialog.getSaveFileName(self, 'Save File', 'editor_clips_videos.clps', options=QFileDialog.DontUseNativeDialog)
+        if not name:
+            return
         with open(name, "wb") as f:
             pickle.dump(dumped_clips, f)
         print('Saved object')
@@ -239,6 +241,8 @@ class MainWindow(QtWidgets.QMainWindow):
         clips_path, _ = QFileDialog.getOpenFileName(self, "Open Clips Json",
                                                    QDir.currentPath(), options=QFileDialog.DontUseNativeDialog)
         print(clips_path)
+        if not clips_path:
+            return
         with open(clips_path, "rb") as f:
             dumped_clips = pickle.load(f)
         for clip in dumped_clips:
