@@ -1,5 +1,6 @@
 import os.path
 import pickle
+import subprocess
 
 import ujson
 from PyQt5 import QtWidgets, uic, QtMultimedia
@@ -49,6 +50,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.player.setNotifyInterval(10) # Calls positionChanged each 10 ms
         self.clipWidget.button_play.clicked.disconnect()  # Disconnect base player button signals
         self.clipWidget.button_play.clicked.connect(self.play_video)
+
+        self.clipWidget.button_open.clicked.disconnect()
+        self.clipWidget.button_open.clicked.connect(self.open_video)
 
         # Arrows
         QShortcut(Qt.Key_Up, self, self.prev_video)
@@ -192,6 +196,38 @@ class MainWindow(QtWidgets.QMainWindow):
             palette.setColor(QPalette.Active, QPalette.Base, color)
             self.keepClip.setPalette(palette)
 
+    def open_video(self):
+        clip_path, _ = QFileDialog.getOpenFileName(self, "Open Video",
+                                                    QDir.currentPath(), options=QFileDialog.DontUseNativeDialog)
+        print(clip_path)
+        if not clip_path:
+            return
+
+        title = os.path.splitext(os.path.basename(clip_path))[0]
+        clip_name = "MY_VIDEOS"+ '/' + title
+        duration = self.duration_for_file(clip_path)
+
+        clip = Clip(id=0, streamer_name="!!MY_VID!!",
+             clip_title=title,
+             filename=os.path.abspath(clip_path),
+             vid_duration=duration)
+        print(clip)
+        video_item = VideoItem(text=clip_name, clip=clip)
+        if self.clipsList.count() > 0:
+            current_index = self.clipsList.currentIndex().row()
+            self.clipsList.insertItem(current_index, video_item)
+        else:
+            self.clipsList.addItem(video_item)
+
+
+    @staticmethod
+    def duration_for_file(filename):
+        result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+                                 "format=duration", "-of",
+                                 "default=noprint_wrappers=1:nokey=1", filename],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        return float(result.stdout)
 
 
     def generate_menu_bar(self):
