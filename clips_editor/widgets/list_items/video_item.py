@@ -4,7 +4,8 @@ from PyQt5.QtWidgets import QListWidget, QAbstractItemView, QPushButton, QListWi
 
 
 class Clip:
-    def __init__(self, id, streamer_name, clip_title, filename, vid_duration):
+    def __init__(self, id, streamer_name, clip_title, filename, vid_duration, clip_json=None):
+
         self.id = id
         self.streamer_name = streamer_name
         self.filename = filename
@@ -19,6 +20,28 @@ class Clip:
         # Getting duration of video clips to trim a percentage of the beginning off
         self.start_cut = 0
         self.end_cut = self.vid_duration
+
+        #clip_json example
+        """    
+        {
+            "broadcaster_id": "46308104",
+            "broadcaster_name": "Froggee",
+            "created_at": "2022-01-23T12:08:07Z",
+            "creator_id": "403772639",
+            "creator_name": "l_tsanka",
+            "duration": 10.5,
+            "embed_url": "https://clips.twitch.tv/embed?clip=DrabBusyAmazonOMGScoots-c-uopLn8xYNzSJbp",
+            "game_id": "509658",
+            "id": "DrabBusyAmazonOMGScoots-c-uopLn8xYNzSJbp",
+            "language": "ru",
+            "thumbnail_url": "https://clips-media-assets2.twitch.tv/AT-cm%7CvrkLPnPrqKS5_MWDc0iW6Q-preview-480x272.jpg",
+            "title": "\u0442\u0438\u043f\u0438\u0447\u043d\u044b\u0439 \u0441\u0442\u0440\u0438\u043c\u0435\u0440 \u0442\u0432\u0438\u0447\u0430",
+            "url": "https://clips.twitch.tv/DrabBusyAmazonOMGScoots-c-uopLn8xYNzSJbp",
+            "video_id": "",
+            "view_count": 20
+        }
+        """
+        self.clip_json = clip_json
 
     def __str__(self):
         return str(self.__dict__)
