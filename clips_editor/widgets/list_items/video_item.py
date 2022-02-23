@@ -20,6 +20,8 @@ class Clip:
         self.start_cut = 0
         self.end_cut = self.vid_duration
 
+    def __str__(self):
+        return str(self.__dict__)
 
 class VideoItem(QListWidgetItem):
     def __init__(self, text, clip, parent=None):
