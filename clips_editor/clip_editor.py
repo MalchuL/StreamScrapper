@@ -233,8 +233,11 @@ class MainWindow(QtWidgets.QMainWindow):
         name, _ = QFileDialog.getSaveFileName(self, 'Save File', 'editor_clips_videos.clps', options=QFileDialog.DontUseNativeDialog)
         if not name:
             return
+
+        twitch_video = {'clips': dumped_clips}
+
         with open(name, "wb") as f:
-            pickle.dump(dumped_clips, f)
+            pickle.dump(twitch_video, f)
         print('Saved object')
 
     def load_clips_from_file(self):
@@ -244,7 +247,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if not clips_path:
             return
         with open(clips_path, "rb") as f:
-            dumped_clips = pickle.load(f)
+            twitch_video = pickle.load(f)
+        dumped_clips = twitch_video['clips']
         for clip in dumped_clips:
             clip_name = clip.streamer_name + '/' + clip.clip_name
             video_item = VideoItem(text=clip_name, clip=clip)
