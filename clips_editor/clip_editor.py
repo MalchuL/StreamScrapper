@@ -19,7 +19,7 @@ from clips_editor.widgets.range_slider.range_slider import QRangeSlider
 from clips_editor.widgets.video_widgets.video_widget import VideoWidget
 
 
-DEFAULT_CLIPS = '/home/malchul/work/streams/stream_parser/twitch_clips_new/dumped_clips_data.json'
+DEFAULT_CLIPS = None
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -317,7 +317,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                         clip_json=clip)
                 video_item = VideoItem(text=clip_name, clip=clip)
                 items.append(video_item)
-        items = sorted(items, key=lambda x: x.clip.clip_json['view_count'])
+        items = sorted(items, key=lambda x: x.clip.clip_json['view_count'], reverse=True)
         for item in items:
             self.clipsList.addItem(item)
 
