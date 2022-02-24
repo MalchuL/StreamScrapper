@@ -34,12 +34,13 @@ class ActiveStreamsScrapper:
             game_names = None
         else:
             game_names = empty_list_to_none(self.get_game_ids(self.scrapper_config.game_names))
-        cursor = None
+
         streams = []
 
         logging.debug(
             f'Try to fetch streams with params game_id={game_names}, language={languages}, first={self.PAGINATION_MAXIMUM}')
         for game_name in game_names:
+            cursor = None
             while len(streams) < self.max_stream_count:
 
                 part_streams = twitch_api.get_streams(after=cursor, game_id=[game_name], language=languages,
