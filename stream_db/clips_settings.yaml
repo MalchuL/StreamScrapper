@@ -1,13 +1,15 @@
 
 mongo_settings:
   db_name: "twitch_streams"
-  collection_name: 'streams_irl_pol_donbass_24.02.2022'
+  collection_name: 'streams_irl_pol_donbass_25.02.2022'
   primary_key: null  # Stream id
 
 
 general_settings:
-  output_folder: 'Assets/politic_24.02.2022'
+  output_folder: 'Assets/politic_25.02.2022'
 
+excluded_clips:
+  - "/home/malchul/work/streams/stream_parser/Assets/politic_24.02.2022/dumped_clips_data.json"
 
 
 clips_scrapper:

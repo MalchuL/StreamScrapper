@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pprint import pprint
 
+import ujson
 from tqdm import tqdm
 from twitchAPI import Twitch, AuthScope
 
@@ -50,6 +51,13 @@ if __name__ == "__main__":
                             "user_name": {"$first": "$user_name"}, }}]
     channels = list(collection.aggregate(pipeline))
 
+    excluded_clips = []
+    if config.excluded_clips is not None:
+        for excluded_path in map(str, config.excluded_clips):
+            with open(excluded_path, 'r') as f:
+                clips = ujson.load(f)
+            excluded_clips.extend([clip['id'] for clip in clips])
+
     clips_parser = TopClipScrapper(twitch, config.clips_scrapper)
     downloader = TwitchDownloader()
 
@@ -73,9 +81,13 @@ if __name__ == "__main__":
 
     with open(os.path.join(config.general_settings.output_folder, "conc_clips_data.json"), "w") as clips_data:
         json.dump(clips, clips_data, indent=4, sort_keys=True)
-
+    clips_was_excluded = []
     output_clips = []
     for clip in tqdm(clips):
+        if clip['id'] in excluded_clips:
+            clips_was_excluded.append(clip["id"])
+            logging.info(f'Skip clip with {clip["id"]} id')
+            continue
         try:
             out_path = downloader.download(clip['id'], os.path.join(config.general_settings.output_folder, clip['broadcaster_name']))
             if out_path is not None:
@@ -86,4 +98,5 @@ if __name__ == "__main__":
     with open(os.path.join(config.general_settings.output_folder, "dumped_clips_data.json"), "w") as clips_data:
         json.dump(clips, clips_data, indent=4, sort_keys=True)
 
-
+    print(clips_was_excluded)
+    print(f'excluded_clips {len(excluded_clips)}, clips was excluded {len(clips_was_excluded)}')
