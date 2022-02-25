@@ -1,0 +1,89 @@
+import json
+import os
+import time
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
+from pprint import pprint
+
+from tqdm import tqdm
+from twitchAPI import Twitch, AuthScope
+
+from twitch_parser.clip_downloader.clip_downloader import TwitchDownloader
+from twitch_parser.clips_scrapper.top_clip_parser import TopClipScrapper
+from twitch_parser.config.config_parser import get_yaml_config
+from twitch_parser.streams_scrapper.active_streams_scrapper import ActiveStreamsScrapper
+from dateutil import parser as date_parser
+import schedule
+import logging
+logging.basicConfig(level=logging.INFO)
+
+def get_mongodb():
+    from pymongo import MongoClient
+    import pymongo
+
+    # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
+    from pymongo import MongoClient
+    client = MongoClient('localhost', 27017)
+    return client
+
+CLIPS_BY_USER_PAGINATION = 10
+num_workers = 5
+
+# This is added so that many files can reuse the function get_database()
+if __name__ == "__main__":
+
+    user_secrets = get_yaml_config('user_secrets.yaml')
+    twitch = Twitch(user_secrets.app_id, user_secrets.app_secret, target_app_auth_scope=[AuthScope.USER_READ_FOLLOWS])
+
+    config = get_yaml_config('stream_db/clips_settings.yaml')
+    pprint(config)
+
+    # Get the database
+    mongodb = get_mongodb()
+    mongo_params = config.mongo_settings
+    dbname = mongodb[mongo_params.db_name]
+    collection = dbname[mongo_params.collection_name]
+
+    pipeline = [{"$group": {"_id": "$user_name",
+                            "user_id": {"$first": "$user_id"},
+                            "user_login": {"$first": "$user_login"},
+                            "user_name": {"$first": "$user_name"}, }}]
+    channels = list(collection.aggregate(pipeline))
+
+    clips_parser = TopClipScrapper(twitch, config.clips_scrapper)
+    downloader = TwitchDownloader()
+
+    os.makedirs(config.general_settings.output_folder, exist_ok=True)
+    with open(os.path.join(config.general_settings.output_folder, "channels_data.json"), "w") as channels_data:
+        json.dump(channels, channels_data, indent=4, sort_keys=True)
+    clips = []
+
+
+    for channel_id in tqdm(tuple(range(0, len(channels), CLIPS_BY_USER_PAGINATION))):
+        channels_subset = [channel['user_id'] for channel in
+                           channels[channel_id:channel_id + CLIPS_BY_USER_PAGINATION]]
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            partials = (partial(clips_parser.get_clips, [channel_id]) for channel_id in channels_subset)
+            futures = [executor.submit(fn) for fn in partials]
+        for user_clips in futures:
+            clips.extend(user_clips.result())
+        logging.info(f'Clips count is {len(clips)}')
+    logging.info(f'Clips count is {len(clips)}')
+    logging.info(f'Start downloading')
+
+    with open(os.path.join(config.general_settings.output_folder, "conc_clips_data.json"), "w") as clips_data:
+        json.dump(clips, clips_data, indent=4, sort_keys=True)
+
+    output_clips = []
+    for clip in tqdm(clips):
+        try:
+            out_path = downloader.download(clip['id'], os.path.join(config.general_settings.output_folder, clip['broadcaster_name']))
+            if out_path is not None:
+                clip['out_path'] = out_path
+                output_clips.append(clip)
+        except Exception as e:
+            print(e)
+    with open(os.path.join(config.general_settings.output_folder, "dumped_clips_data.json"), "w") as clips_data:
+        json.dump(clips, clips_data, indent=4, sort_keys=True)
+
+

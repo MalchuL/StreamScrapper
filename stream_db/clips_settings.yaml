@@ -1,0 +1,20 @@
+
+mongo_settings:
+  db_name: "twitch_streams"
+  collection_name: 'streams_irl_pol_donbass_24.02.2022'
+  primary_key: null  # Stream id
+
+
+general_settings:
+  output_folder: 'Assets/politic_24.02.2022'
+
+
+
+clips_scrapper:
+  game_names: ["Just Chatting", "Politics"]
+  max_clips_count: 30
+  start: now  # In '%d/%m/%y %H:%M:%S' format on now for ex 18/09/19 01:55:19
+  before_days: 1
+  conditions:
+    view_count: ">=5"
+
