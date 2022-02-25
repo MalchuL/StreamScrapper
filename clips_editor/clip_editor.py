@@ -242,7 +242,7 @@ class MainWindow(QtWidgets.QMainWindow):
         clear_act.triggered.connect(self.clipsList.clear)
 
         save_act = QAction('&Save editor clips', self)
-        clear_act.setShortcut('Ctrl+S')
+        save_act.setShortcut('Ctrl+S')
         save_act.setStatusTip('Save clips to binary file')
         save_act.triggered.connect(self.save_clips_to_file)
 
