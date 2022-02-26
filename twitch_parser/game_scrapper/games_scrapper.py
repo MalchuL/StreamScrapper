@@ -1,3 +1,4 @@
+import time
 from pprint import pprint
 import logging
 from twitchAPI.twitch import Twitch
@@ -15,7 +16,14 @@ class GamesScrapper:
     def get_games(self, game_names):
         if not game_names:
             return None
-        games = self.twitch_api.get_games(names=list(game_names))['data']
+        while True:
+            try:
+                games = self.twitch_api.get_games(names=list(game_names))['data']
+                break
+            except KeyError as e:
+                print(e, 'possibly reached rate limit, waiting for reset')
+                time.sleep(30)
+
         return games
 
     def get_game_ids(self, game_names):

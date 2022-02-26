@@ -1,3 +1,4 @@
+import time
 from pprint import pprint
 import logging
 from twitchAPI.twitch import Twitch
@@ -34,14 +35,23 @@ class TopClipScrapper:
         logging.debug(f'Search for game ids={game_ids} and broadcaster={broadcaster_ids}')
         clips = []
         cursor = None
+        if broadcaster_ids is not None:
+            input_game_ids = None
+        else:
+            input_game_ids = game_ids
         while len(clips) < self.max_clips_count:
-            if broadcaster_ids is not None:
-                input_game_ids = None
-            else:
-                input_game_ids = game_ids
-            part_clips = twitch_api.get_clips(after=cursor, game_id=input_game_ids, broadcaster_id=broadcaster_ids, first=self.PAGINATION_MAXIMUM, started_at=self.end_time, ended_at=self.start_time)
 
-            part_clips_data = part_clips['data']
+            try:
+                part_clips = twitch_api.get_clips(after=cursor, game_id=input_game_ids, broadcaster_id=broadcaster_ids, first=self.PAGINATION_MAXIMUM, started_at=self.end_time, ended_at=self.start_time)
+
+                part_clips_data = part_clips['data']
+            except KeyError as e:
+                print(e, 'possibly rate possibly reached rate limit, waiting for reset')
+                clips = []
+                cursor = None
+                time.sleep(30)
+                continue
+
             if game_ids and broadcaster_ids is not None:
                 part_clips_data = []
                 for clip in part_clips['data']:
