@@ -15,3 +15,7 @@ Instruction from https://dev.twitch.tv/docs/api
 
 
 install `sudo apt install ubuntu-restricted-extras`
+
+
+Install MongoDB by https://docs.mongodb.com/manual/administration/install-on-linux/
+Install MongoDB Compass https://www.mongodb.com/try/download/compass
