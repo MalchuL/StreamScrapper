@@ -153,7 +153,7 @@ def render_video(twitch_video: dict):
         sleep(5)
 
 
-DEFAULTS_CLIPS_FILE = 'out_clips.tmp'
+DEFAULTS_CLIPS_FILE = '/home/malchul/work/streams/stream_parser/Assets/politic_26.02.2022/editor_clips_videos.clps'
 inclide_streamer_name =True
 fps = 30
 

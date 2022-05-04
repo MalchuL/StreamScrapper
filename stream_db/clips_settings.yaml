@@ -1,7 +1,7 @@
 
 mongo_settings:
   db_name: "twitch_streams"
-  collection_name: 'streams_irl_pol_donbass_26.02.2022'
+  collection_name: 'streams_irl_05.05.2022'
   primary_key: null  # Stream id
 
 
@@ -9,12 +9,12 @@ general_settings:
   output_folder: 'Assets/politic_26.02.2022'
 
 excluded_clips:
-  - "/home/malchul/work/streams/stream_parser/Assets/politic_24.02.2022/dumped_clips_data.json"
-  - "/home/malchul/work/streams/stream_parser/Assets/politic_25.02.2022/dumped_clips_data.json"
+#  - "/home/malchul/work/streams/stream_parser/Assets/politic_24.02.2022/dumped_clips_data.json"
+#  - "/home/malchul/work/streams/stream_parser/Assets/politic_25.02.2022/dumped_clips_data.json"
 
 
 clips_scrapper:
-  game_names: ["Just Chatting", "Politics"]
+  game_names: ["Just Chatting"]
   max_clips_count: 30
   start: now  # In '%d/%m/%y %H:%M:%S' format on now for ex 18/09/19 01:55:19
   before_days: 1
