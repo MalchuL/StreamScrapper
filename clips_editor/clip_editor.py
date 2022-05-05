@@ -51,6 +51,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clipWidget.button_play.clicked.disconnect()  # Disconnect base player button signals
         self.clipWidget.button_play.clicked.connect(self.play_video)
 
+        self.deleteButton.clicked.connect(self.delete_current)
+
         self.clipWidget.button_open.clicked.disconnect()
         self.clipWidget.button_open.clicked.connect(self.open_video)
 
@@ -59,6 +61,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QShortcut(Qt.Key_Down, self, self.next_video)
         QShortcut(Qt.Key_Space, self, self.play_video)
         QShortcut(Qt.Key_Return, self, lambda: self.keepClip.setChecked(True))
+        QShortcut(Qt.Key_Delete, self, self.delete_current)
 
 
         # Todo fix this
@@ -81,6 +84,15 @@ class MainWindow(QtWidgets.QMainWindow):
         if item is not None:
             item.clip.end_cut = value
             self.start_play(item.clip.end_cut - self.ON_RANGE_CHANGE_OFFSET)
+
+    def delete_current(self):
+        if self.clipsList.count() > 0:
+            current_index = self.clipsList.currentIndex().row()
+            self.clipsList.takeItem(current_index)
+            if self.clipsList.count() > 0:
+                new_index = current_index if current_index < self.clipsList.count() else self.clipsList.count() - 1
+                self.clipsList.setCurrentRow(new_index)
+        self.update_final_duration()
 
     def start_play(self, play_at):
         """
