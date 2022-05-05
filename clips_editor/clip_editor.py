@@ -163,6 +163,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_global_info(self):
         self.clipsCountLabel.setText(f'Clips: {self.clipsList.currentIndex().row() + 1}/{self.clipsList.count()}')
+        self.update_final_duration()
 
     def update_video_editor(self, item: VideoItem):
         if item is not None:
@@ -229,6 +230,17 @@ class MainWindow(QtWidgets.QMainWindow):
                                 stderr=subprocess.STDOUT)
         return float(result.stdout)
 
+    def update_final_duration(self):
+        video_len = self.get_result_len()
+        self.finalDurationLabel.setText(f'Final duration: {video_len / 60:0.2f}m')
+
+    def get_result_len(self):
+        result_len = 0
+        for i in range(self.clipsList.count()):
+            clip_data: Clip = self.clipsList.item(i).clip
+            if clip_data.isUsed:
+                result_len += clip_data.end_cut - clip_data.start_cut
+        return result_len
 
     def generate_menu_bar(self):
         load_act = QAction('&Open Clips Json...', self)
