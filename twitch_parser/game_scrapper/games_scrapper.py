@@ -21,7 +21,7 @@ class GamesScrapper:
                 games = self.twitch_api.get_games(names=list(game_names))['data']
                 break
             except KeyError as e:
-                print(e, 'possibly reached rate limit, waiting for reset')
+                logging.exception('possibly rate possibly reached rate limit, waiting for reset')
                 time.sleep(30)
 
         return games

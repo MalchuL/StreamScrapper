@@ -59,7 +59,7 @@ class TwitchDownloader:
                 download(args)
                 return self.get_output_filename(video_id, output_folder=output_folder)
             except Exception as e:
-                logging.error(e)
+                logging.exception('Error while downloading')
                 time.sleep(30)
 
 if __name__ == '__main__':

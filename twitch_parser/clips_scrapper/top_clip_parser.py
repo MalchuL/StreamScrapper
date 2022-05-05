@@ -46,7 +46,7 @@ class TopClipScrapper:
 
                 part_clips_data = part_clips['data']
             except KeyError as e:
-                print(e, 'possibly rate possibly reached rate limit, waiting for reset')
+                logging.exception('possibly rate possibly reached rate limit, waiting for reset')
                 clips = []
                 cursor = None
                 time.sleep(30)
