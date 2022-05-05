@@ -1,4 +1,6 @@
+import logging
 import os.path
+import time
 
 import twitchdl
 from twitchdl import utils
@@ -52,14 +54,13 @@ class TwitchDownloader:
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
             args.output = os.path.join(output_folder, args.output)
-        try:
-            download(args)
-        except ConsoleError as e:
-            if video_id in str(e) and 'not found' in str(e):
-                return None
-            else:
-                raise
-        return self.get_output_filename(video_id, output_folder=output_folder)
+        for _ in range(10):
+            try:
+                download(args)
+                return self.get_output_filename(video_id, output_folder=output_folder)
+            except Exception as e:
+                logging.error(e)
+                time.sleep(30)
 
 if __name__ == '__main__':
     downloader = TwitchDownloader()
