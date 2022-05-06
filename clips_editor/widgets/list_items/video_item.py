@@ -4,12 +4,13 @@ from PyQt5.QtWidgets import QListWidget, QAbstractItemView, QPushButton, QListWi
 
 
 class Clip:
-    def __init__(self, id, streamer_name, clip_title, filename, vid_duration, clip_json=None):
+    def __init__(self, id, streamer_name, clip_title, filename, vid_duration, views_count=0, clip_json=None):
 
         self.id = id
         self.streamer_name = streamer_name
         self.filename = filename
         self.clip_name = clip_title
+        self.views_count = views_count
         self.vid_duration = vid_duration
         self.upload = False
         self.isIntro = False

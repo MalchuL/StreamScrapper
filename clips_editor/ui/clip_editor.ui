@@ -155,7 +155,7 @@
     <property name="geometry">
      <rect>
       <x>1040</x>
-      <y>120</y>
+      <y>100</y>
       <width>161</width>
       <height>61</height>
      </rect>
@@ -194,7 +194,7 @@
     <property name="geometry">
      <rect>
       <x>1030</x>
-      <y>230</y>
+      <y>220</y>
       <width>191</width>
       <height>16</height>
      </rect>
@@ -207,13 +207,26 @@
     <property name="geometry">
      <rect>
       <x>1030</x>
-      <y>270</y>
+      <y>260</y>
       <width>191</width>
       <height>61</height>
      </rect>
     </property>
     <property name="text">
      <string>Final duration: </string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="viewerCount">
+    <property name="geometry">
+     <rect>
+      <x>1040</x>
+      <y>150</y>
+      <width>161</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Views:</string>
     </property>
    </widget>
   </widget>

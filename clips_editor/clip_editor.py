@@ -182,6 +182,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.clipWidget.open_video(item.clip.filename)
             self.volumeSlider.setValue(item.clip.volume * 100)
             self.durationLabel.setText(f'Duration: {item.clip.vid_duration}')
+            if hasattr(item.clip, 'views_count'):
+                self.viewerCount.setText(f'Views: {item.clip.views_count}')
             self.keepClip.setChecked(item.clip.isUsed)
 
             # Draw slider values
@@ -338,7 +340,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                        clip_title=clip['title'],
                                        filename=os.path.join(base_folder, clip['out_path']),
                                        vid_duration=clip['duration'],
-                                        clip_json=clip)
+                                       views_count=clip['view_count'],
+                                       clip_json=clip)
                 video_item = VideoItem(text=clip_name, clip=clip)
                 items.append(video_item)
         items = sorted(items, key=lambda x: x.clip.clip_json['view_count'], reverse=True)
