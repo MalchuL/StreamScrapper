@@ -12,6 +12,8 @@ excluded_clips:
 #  - "/home/malchul/work/streams/stream_parser/Assets/politic_24.02.2022/dumped_clips_data.json"
 #  - "/home/malchul/work/streams/stream_parser/Assets/politic_25.02.2022/dumped_clips_data.json"
 
+channels_condition:
+  viewer_count: "<=35"
 
 clips_scrapper:
   game_names: ["Just Chatting"]

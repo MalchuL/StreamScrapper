@@ -16,6 +16,9 @@ from twitch_parser.streams_scrapper.active_streams_scrapper import ActiveStreams
 from dateutil import parser as date_parser
 import schedule
 import logging
+
+from twitch_parser.utils.conditions import KeyValueComparator
+
 logging.basicConfig(level=logging.INFO)
 
 def get_mongodb():
@@ -48,8 +51,15 @@ if __name__ == "__main__":
     pipeline = [{"$group": {"_id": "$user_name",
                             "user_id": {"$first": "$user_id"},
                             "user_login": {"$first": "$user_login"},
-                            "user_name": {"$first": "$user_name"}, }}]
+                            "user_name": {"$first": "$user_name"},
+                            "viewer_count": {"$avg": "$viewer_count"}}}]
     channels = list(collection.aggregate(pipeline))
+    channel_filter = KeyValueComparator(config.channels_condition)
+    #print(len(channels))
+    #print([channel["user_name"] for channel in channels if not channel_filter.check_condition(channel)])
+    channels = [channel for channel in channels if channel_filter.check_condition(channel)]
+    #print(len(channels))
+
 
     excluded_clips = []
     if config.excluded_clips is not None:
