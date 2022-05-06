@@ -15,6 +15,7 @@ from video_generator.title_generator.text_styles.example_style import ExampleSty
 
 def render_text(text, width=1024, out_path='out.png'):
     # You can get params for <meta> from `wkhtmltoimage --help` and `wkhtmltoimage --readme`
+    # You can find examples on CodePen
     style = ExampleStyle()
 
 
