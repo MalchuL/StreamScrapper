@@ -13,6 +13,7 @@ class ExampleStyle(Style):
                   text-align: center;
                   text-transform: uppercase;
                   text-rendering: optimizeLegibility;
+                  border-radius: 10px;
                 }
                 h1.elegantshadow {
                   color: #131313;
