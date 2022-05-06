@@ -16,6 +16,7 @@ Instruction from https://dev.twitch.tv/docs/api
 
 
 install `sudo apt install ubuntu-restricted-extras`
+install `sudo apt-get install wkhtmltopdf`
 
 
 Install MongoDB by https://docs.mongodb.com/manual/administration/install-on-linux/
