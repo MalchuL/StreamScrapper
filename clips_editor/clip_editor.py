@@ -30,6 +30,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #Load the UI Page
         uic.loadUi('clips_editor/ui/clip_editor.ui', self)
+        self.centralwidget.setLayout(self.mainLayout)
+        self.setCentralWidget(self.centralwidget)
         self.generate_menu_bar()
 
         self.clipsList: ThumbListWidget  # List with clips, ALL INFO HOLDS HERE
