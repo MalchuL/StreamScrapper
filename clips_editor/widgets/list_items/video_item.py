@@ -27,7 +27,6 @@ class Clip:
         self.subs_alignment = DEFAULT_SUBS_ALIGNMENT
         self.title_alignment = DEFAULT_TITLE_ALIGNMENT
         self.title = clip_json["title"]
-        print(self.title)
 
         #clip_json example
         """    
