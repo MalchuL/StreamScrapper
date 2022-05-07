@@ -40,15 +40,21 @@ def getColour(colourstring):
 def test_existence(video_data):
     for clip in video_data['clips']:
         assert clip.isUsed in [True, False]
-        name = clip.streamer_name
-        video_path = clip.filename
-        assert os.path.exists(video_path)
-        start_trim = round(clip.start_cut, 1)
-        end_trim = round(clip.end_cut, 1)
-        assert start_trim < end_trim
-        assert clip.volume >= 0
-        _ = clip.isInterval
-        _ = clip.isIntro
+
+        if clip.isUsed:
+            try:
+                name = clip.streamer_name
+                video_path = clip.filename
+                assert os.path.exists(video_path)
+                start_trim = round(clip.start_cut, 1)
+                end_trim = round(clip.end_cut, 1)
+                assert start_trim < end_trim
+                assert clip.volume >= 0
+                _ = clip.isInterval
+                _ = clip.isIntro
+            except Exception as e:
+                print('Error in clip', clip)
+                raise
 
 def render_video(twitch_video: dict, config):
     clips = twitch_video['clips']
