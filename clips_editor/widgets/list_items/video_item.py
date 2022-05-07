@@ -3,6 +3,9 @@ from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QListWidget, QAbstractItemView, QPushButton, QListWidgetItem
 
 
+DEFAULT_SUBS_ALIGNMENT = 1
+DEFAULT_TITLE_ALIGNMENT = 10
+
 class Clip:
     def __init__(self, id, streamer_name, clip_title, filename, vid_duration, views_count=0, clip_json=None):
 
@@ -21,6 +24,10 @@ class Clip:
         # Getting duration of video clips to trim a percentage of the beginning off
         self.start_cut = 0
         self.end_cut = self.vid_duration
+        self.subs_alignment = DEFAULT_SUBS_ALIGNMENT
+        self.title_alignment = DEFAULT_TITLE_ALIGNMENT
+        self.title = clip_json["title"]
+        print(self.title)
 
         #clip_json example
         """    

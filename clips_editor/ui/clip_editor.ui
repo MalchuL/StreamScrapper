@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1228</width>
-    <height>775</height>
+    <width>1358</width>
+    <height>875</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -142,6 +142,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="finalDurationLabel">
+         <property name="text">
+          <string>Final duration: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="durationLabel">
          <property name="text">
           <string>Duration: </string>
@@ -159,17 +173,346 @@
         </widget>
        </item>
        <item>
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <widget class="QGroupBox" name="subtitleGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
+         <property name="title">
+          <string>Subtitles Alignment</string>
+         </property>
+         <widget class="QRadioButton" name="subAlignRadioButton_7">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_8">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>20</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_9">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>20</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_4">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>40</y>
+            <width>16</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_5">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>40</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_6">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>40</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_1">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>60</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_2">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>60</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_3">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>60</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="subAlignRadioButton_0">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>80</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="finalDurationLabel">
-         <property name="text">
-          <string>Final duration: </string>
+        <widget class="QGroupBox" name="titleGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
+         <property name="title">
+          <string>Title Alignment</string>
+         </property>
+         <widget class="QRadioButton" name="titleAlignRadioButton_7">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_8">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>20</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_9">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>20</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_4">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>40</y>
+            <width>16</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_5">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>40</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_6">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>40</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_1">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>60</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_2">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>60</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_3">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>60</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
+         <widget class="QRadioButton" name="titleAlignRadioButton_0">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>80</y>
+            <width>112</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">titleAllignmenButtonGroup</string>
+          </attribute>
+         </widget>
         </widget>
        </item>
        <item>
@@ -196,7 +539,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1228</width>
+     <width>1358</width>
      <height>22</height>
     </rect>
    </property>
@@ -228,4 +571,8 @@
  </customwidgets>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="subsAllignmenButtonGroup"/>
+  <buttongroup name="titleAllignmenButtonGroup"/>
+ </buttongroups>
 </ui>

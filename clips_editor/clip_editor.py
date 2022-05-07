@@ -13,7 +13,7 @@ from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut, QCheckBox, QSlider
 from PyQt5 import QtCore
 
-from clips_editor.widgets.list_items.video_item import VideoItem, Clip
+from clips_editor.widgets.list_items.video_item import VideoItem, Clip, DEFAULT_SUBS_ALIGNMENT, DEFAULT_TITLE_ALIGNMENT
 from clips_editor.widgets.list_widgets.thumb_list_widget import ThumbListWidget
 from clips_editor.widgets.range_slider.range_slider import QRangeSlider
 from clips_editor.widgets.video_widgets.video_widget import VideoWidget
@@ -58,6 +58,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clipWidget.button_open.clicked.disconnect()
         self.clipWidget.button_open.clicked.connect(self.open_video)
 
+        # QButtonGroup with allignment for subtitles in numpad style
+        for i, button in enumerate(self.subsAllignmenButtonGroup.buttons()):
+            self.subsAllignmenButtonGroup.setId(button, i + 1)
+        self.subsAllignmenButtonGroup.button(DEFAULT_SUBS_ALIGNMENT).setChecked(True)
+        self.subsAllignmenButtonGroup.buttonClicked.connect(self.set_subtitle_alignment)
+
+        # QButtonGroup with allignment for title in numpad style
+        for i, button in enumerate(self.titleAllignmenButtonGroup.buttons()):
+            self.titleAllignmenButtonGroup.setId(button, i + 1)
+        self.titleAllignmenButtonGroup.button(DEFAULT_TITLE_ALIGNMENT).setChecked(True)
+        self.titleAllignmenButtonGroup.buttonClicked.connect(self.set_title_alignment)
+
+
         # Arrows
         QShortcut(Qt.Key_Up, self, self.prev_video)
         QShortcut(Qt.Key_Down, self, self.next_video)
@@ -95,6 +108,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 new_index = current_index if current_index < self.clipsList.count() else self.clipsList.count() - 1
                 self.clipsList.setCurrentRow(new_index)
         self.update_final_duration()
+
+    def set_subtitle_alignment(self, button):
+        item = self.clipsList.currentItem()
+        if item is None:
+            return
+        item.clip.subs_alignment = self.subsAllignmenButtonGroup.id(button)
+
+    def set_title_alignment(self, button):
+        item = self.clipsList.currentItem()
+        if item is None:
+            return
+        item.clip.title_alignment = self.titleAllignmenButtonGroup.id(button)
 
     def start_play(self, play_at):
         """
@@ -212,6 +237,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 color = QColor(255, 0, 0)
             palette.setColor(QPalette.Active, QPalette.Base, color)
             self.keepClip.setPalette(palette)
+
+            self.subsAllignmenButtonGroup.button(item.clip.subs_alignment).setChecked(True)
+            self.titleAllignmenButtonGroup.button(item.clip.title_alignment).setChecked(True)
 
     def open_video(self):
         clip_path, _ = QFileDialog.getOpenFileName(self, "Open Video",
