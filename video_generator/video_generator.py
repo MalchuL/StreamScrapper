@@ -100,8 +100,8 @@ def render_video(twitch_video: dict, config):
         volume = clip.volume
 
         print('Adding text')
-
-        subs.styles['vidText'] = SSAStyle(alignment=7, fontname='Gilroy-ExtraBold', fontsize=25, marginl=4,
+        alignment = 1  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
+        subs.styles['vidText'] = SSAStyle(alignment=alignment, fontname='Gilroy-ExtraBold', fontsize=25, marginl=4,
                                           marginv=-2.5, marginr=0, outline=2, outlinecolor=color2,
                                           primarycolor=color1, shadow=0)
         if inclide_streamer_name:
