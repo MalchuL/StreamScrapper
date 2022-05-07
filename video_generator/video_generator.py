@@ -109,26 +109,26 @@ def render_video(twitch_video: dict, config):
         subs.save(f'subtitleFile.ass')
 
         rendered_path = os.path.join(vid_finishedvids, f'{os.path.splitext(os.path.basename(video_path))[0]}_finished.mp4')
-
+        w, h = config.video_resolution
         if not clip.isInterval and not clip.isIntro:
             print("%s duration %s" % (video_path, final_duration))
             if end_trim == 0 and start_trim == 0:
                 print("%s no trim" % video_path)
                 os.system(
-                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -vf \"ass=subtitleFile.ass, scale=1920:1080\" \"{rendered_path}\"")
+                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
             elif end_trim > 0 and start_trim > 0:
                 print("%s start trim %s and end trim %s" % (video_path, start_trim, end_trim))
                 os.system(
-                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -t {final_duration} -vf \"ass=subtitleFile.ass, scale=1920:1080\" \"{rendered_path}\"")
+                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -t {final_duration} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
             elif end_trim > 0 and start_trim == 0:
                 print("%s end trim %s" % (video_path, end_trim))
 
                 os.system(
-                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -t {end_trim} -vf \"ass=subtitleFile.ass, scale=1920:1080\" \"{rendered_path}\"")
+                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -t {end_trim} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
             elif end_trim == 0 and start_trim > 0:
                 print("%s start trim %s" % (video_path, start_trim))
                 os.system(
-                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -vf \"ass=subtitleFile.ass, scale=1920:1080\" \"{rendered_path}\"")
+                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
 
         if not clip.isInterval and not clip.isIntro:
             finish = VideoFileClip(rendered_path).fx(afx.volumex, volume)
