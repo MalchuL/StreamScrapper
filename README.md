@@ -17,25 +17,29 @@ Instruction from https://dev.twitch.tv/docs/api
 
 install `sudo apt install ubuntu-restricted-extras`
 install `sudo apt-get install wkhtmltopdf`
+install `sudo apt  install ffmpeg`
 
 
 Install MongoDB by https://docs.mongodb.com/manual/administration/install-on-linux/
 Install MongoDB Compass https://www.mongodb.com/try/download/compass
 
+## Runs clips dumping into mongodb
+1. export PYTHONPATH=`pwd`
+2. python stream_db/run_dumping.py 
+
+## Dumping clips from mongo db
+1. python stream_db/download_clips.py 
 
 ## Runs clips editor
 1. export PYTHONPATH=`pwd`
 2. python clips_editor/clip_editor.py
 
-## Runs clips dumping into mongodb
+## Merging clips
 1. export PYTHONPATH=`pwd`
-2. python stream_db/run_dumping.py 
+3. python video_generator/video_generator.py
 
 ## Fast clips dumping
 1. Run twitch_downloader.py
 
-## Dumping clips from mongo db
-1. python stream_db/download_clips.py 
 
-## Merging clips
-1. python video_generator.py
+

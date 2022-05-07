@@ -6,7 +6,6 @@ from time import sleep
 
 from moviepy.audio.AudioClip import CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
-from moviepy.video.compositing.concatenate import concatenate_videoclips
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from pysubs2 import SSAFile, SSAStyle, SSAEvent, make_time
 
@@ -14,6 +13,10 @@ from clips_editor.widgets.list_items.video_item import Clip
 import moviepy.audio.fx.volumex as afx
 
 #bgr format with &h at start and & at end
+from twitch_parser.config.config_parser import get_yaml_config
+from video_editor.concatenate import concatenate_videoclips
+
+
 def getColour(colourstring):
     if colourstring == "Blue":
         return "&hff0000&"
@@ -34,7 +37,20 @@ def getColour(colourstring):
     elif colourstring == "Yellow":
         return "&h00ffff&"
 
-def render_video(twitch_video: dict):
+def test_existence(video_data):
+    for clip in video_data['clips']:
+        assert clip.isUsed in [True, False]
+        name = clip.streamer_name
+        video_path = clip.filename
+        assert os.path.exists(video_path)
+        start_trim = round(clip.start_cut, 1)
+        end_trim = round(clip.end_cut, 1)
+        assert start_trim < end_trim
+        assert clip.volume >= 0
+        _ = clip.isInterval
+        _ = clip.isIntro
+
+def render_video(twitch_video: dict, config):
     clips = twitch_video['clips']
     color1 = getColour(twitch_video.get('color1', "Black"))
     color2 = getColour(twitch_video.get('color2', "White"))
@@ -120,7 +136,7 @@ def render_video(twitch_video: dict):
     random.shuffle(musicFiles)
 
     print("done working out durations")
-    final_concat = concatenate_videoclips(final_clips)
+    final_concat = concatenate_videoclips(final_clips, size=config.video_resolution)
     print("done combining clips")
     print(musicFiles)
     if music_type is None:
@@ -153,7 +169,6 @@ def render_video(twitch_video: dict):
         sleep(5)
 
 
-DEFAULTS_CLIPS_FILE = '/home/malchul/work/streams/stream_parser/Assets/politic_26.02.2022/editor_clips_videos.clps'
 inclide_streamer_name =True
 fps = 30
 
@@ -163,16 +178,17 @@ final_clips_path = os.path.join(out_folder, 'Final Clips')
 
 
 if __name__ == '__main__':
-    clips_path = DEFAULTS_CLIPS_FILE
+
 
 
     os.makedirs(out_folder, exist_ok=True)
     os.makedirs(vid_finishedvids, exist_ok=True)
     os.makedirs(final_clips_path, exist_ok=True)
-
+    config = get_yaml_config('video_generator/video_generator_settings.yaml')
+    clips_path = config.clips_path
     with open(clips_path, "rb") as f:
         twitch_video = pickle.load(f)
     for clip in twitch_video['clips']:
         print(clip)
-
-    render_video(twitch_video)
+    test_existence(twitch_video)
+    render_video(twitch_video, config)
