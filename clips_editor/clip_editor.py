@@ -70,6 +70,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.titleAllignmenButtonGroup.button(DEFAULT_TITLE_ALIGNMENT).setChecked(True)
         self.titleAllignmenButtonGroup.buttonClicked.connect(self.set_title_alignment)
 
+        self.titleTextEdit.textChanged.connect(self.save_title)
 
         # Arrows
         QShortcut(Qt.Key_Up, self, self.prev_video)
@@ -120,6 +121,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if item is None:
             return
         item.clip.title_alignment = self.titleAllignmenButtonGroup.id(button)
+
+    def save_title(self):
+        item = self.clipsList.currentItem()
+        if item is None:
+            return
+        item.clip.title = self.titleTextEdit.toPlainText()
 
     def start_play(self, play_at):
         """
@@ -240,6 +247,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.subsAllignmenButtonGroup.button(item.clip.subs_alignment).setChecked(True)
             self.titleAllignmenButtonGroup.button(item.clip.title_alignment).setChecked(True)
+            self.titleTextEdit.setPlainText(item.clip.title)
 
     def open_video(self):
         clip_path, _ = QFileDialog.getOpenFileName(self, "Open Video",

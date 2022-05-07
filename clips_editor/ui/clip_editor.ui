@@ -180,6 +180,12 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>110</height>
+          </size>
+         </property>
          <property name="title">
           <string>Subtitles Alignment</string>
          </property>
@@ -336,6 +342,9 @@
             <height>23</height>
            </rect>
           </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(239, 41, 41);</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -349,6 +358,12 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>110</height>
+          </size>
          </property>
          <property name="title">
           <string>Title Alignment</string>
@@ -506,6 +521,9 @@
             <height>23</height>
            </rect>
           </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(239, 41, 41);</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -514,6 +532,9 @@
           </attribute>
          </widget>
         </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="titleTextEdit"/>
        </item>
        <item>
         <spacer name="verticalSpacer">
