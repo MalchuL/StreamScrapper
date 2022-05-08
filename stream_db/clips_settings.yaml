@@ -19,7 +19,7 @@ clips_scrapper:
   game_names: ["Just Chatting"]
   max_clips_count: 30
   start: now  # In '%d/%m/%y %H:%M:%S' format on now for ex 18/09/19 01:55:19
-  before_days: 1
+  before_days: 5
   conditions:
-    view_count: ">=5"
+    view_count: ">=10"
 
