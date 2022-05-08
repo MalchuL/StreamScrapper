@@ -11,7 +11,7 @@ import sys
 from PyQt5.QtCore import QDir, Qt, QModelIndex, QAbstractItemModel
 from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtMultimedia import QMediaPlayer
-from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut, QCheckBox, QSlider
+from PyQt5.QtWidgets import QListWidgetItem, QAction, QFileDialog, QShortcut, QCheckBox, QSlider, QButtonGroup
 from PyQt5 import QtCore
 
 from clips_editor.widgets.list_items.video_item import VideoItem, Clip, DEFAULT_SUBS_ALIGNMENT, DEFAULT_TITLE_ALIGNMENT
@@ -61,14 +61,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clipWidget.button_open.clicked.connect(self.open_video)
 
         # QButtonGroup with allignment for subtitles in numpad style
-        for i, button in enumerate(self.subsAllignmenButtonGroup.buttons()):
-            self.subsAllignmenButtonGroup.setId(button, i + 1)
+        self.subsAllignmenButtonGroup = QButtonGroup()
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_0, 0)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_1, 1)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_2, 2)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_3, 3)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_4, 4)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_5, 5)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_6, 6)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_7, 7)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_8, 8)
+        self.subsAllignmenButtonGroup.addButton(self.subAlignRadioButton_9, 9)
         self.subsAllignmenButtonGroup.button(DEFAULT_SUBS_ALIGNMENT).setChecked(True)
         self.subsAllignmenButtonGroup.buttonClicked.connect(self.set_subtitle_alignment)
 
         # QButtonGroup with allignment for title in numpad style
-        for i, button in enumerate(self.titleAllignmenButtonGroup.buttons()):
-            self.titleAllignmenButtonGroup.setId(button, i + 1)
+        self.titleAllignmenButtonGroup = QButtonGroup()
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_0, 0)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_1, 1)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_2, 2)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_3, 3)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_4, 4)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_5, 5)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_6, 6)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_7, 7)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_8, 8)
+        self.titleAllignmenButtonGroup.addButton(self.titleAlignRadioButton_9, 9)
         self.titleAllignmenButtonGroup.button(DEFAULT_TITLE_ALIGNMENT).setChecked(True)
         self.titleAllignmenButtonGroup.buttonClicked.connect(self.set_title_alignment)
 

@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QListWidget, QAbstractItemView, QPushButton, QListWi
 
 
 DEFAULT_SUBS_ALIGNMENT = 1
-DEFAULT_TITLE_ALIGNMENT = 10
+DEFAULT_TITLE_ALIGNMENT = 0
 
 class Clip:
     def __init__(self, id, streamer_name, clip_title, filename, vid_duration, views_count=0, clip_json=None):
