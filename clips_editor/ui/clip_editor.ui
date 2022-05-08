@@ -355,6 +355,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">subsAllignmenButtonGroup</string>
+          </attribute>
          </widget>
         </widget>
        </item>
@@ -600,7 +603,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="subsAllignmenButtonGroup"/>
   <buttongroup name="titleAllignmenButtonGroup"/>
+  <buttongroup name="subsAllignmenButtonGroup"/>
  </buttongroups>
 </ui>
