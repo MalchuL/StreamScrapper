@@ -1,10 +1,13 @@
 import json
+import math
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pprint import pprint
+from typing import Iterable
 
+import numpy as np
 import ujson
 from tqdm import tqdm
 from twitchAPI import Twitch, AuthScope
@@ -34,6 +37,12 @@ CLIPS_BY_USER_PAGINATION = 10
 num_workers = 5
 
 # This is added so that many files can reuse the function get_database()
+
+def process_channel(channel):
+    if isinstance(channel["viewer_count"], (Iterable)) and not isinstance(channel["viewer_count"], str):
+        channel["viewer_count"] = math.floor(np.median(channel["viewer_count"]))
+    return channel
+
 if __name__ == "__main__":
 
     user_secrets = get_yaml_config('user_secrets.yaml')
@@ -52,14 +61,11 @@ if __name__ == "__main__":
                             "user_id": {"$first": "$user_id"},
                             "user_login": {"$first": "$user_login"},
                             "user_name": {"$first": "$user_name"},
-                            "viewer_count": {"$avg": "$viewer_count"}}}]
+                            "viewer_count": {"$push": "$viewer_count"}}}]
     channels = list(collection.aggregate(pipeline))
     channel_filter = KeyValueComparator(config.channels_condition)
-    #print(len(channels))
-    #print([channel["user_name"] for channel in channels if not channel_filter.check_condition(channel)])
+    channels = list(map(process_channel, channels)) # Apply some changes for processing
     channels = [channel for channel in channels if channel_filter.check_condition(channel)]
-    #print(len(channels))
-
 
     excluded_clips = []
     if config.excluded_clips is not None:
