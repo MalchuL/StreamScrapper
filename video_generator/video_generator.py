@@ -103,12 +103,12 @@ def render_video(twitch_video: dict, config):
         volume = clip.volume
 
         print('Adding text')
-        alignment = clip.subs_alignment  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
+        alignment = max(clip.subs_alignment, 1)  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
         subs.styles['vidText'] = SSAStyle(alignment=alignment, fontname='Gilroy-ExtraBold', fontsize=25, marginl=4,
                                           marginv=-2.5, marginr=0, outline=2, outlinecolor=color2,
                                           primarycolor=color1, shadow=0)
         if inclide_streamer_name:
-            subs.append(SSAEvent(start=make_time(s=0), end=make_time(s=60), style='vidText', text=f"twitch.tv/{name}"))
+            subs.append(SSAEvent(start=make_time(s=0), end=make_time(s=60), style='vidText', text=f"twitch.tv/{name}" if clip.subs_alignment > 0 else 0))
         subs.save(f'subtitleFile.ass')
 
         rendered_path = os.path.join(vid_finishedvids, f'{os.path.splitext(os.path.basename(video_path))[0]}_finished.mp4')
@@ -134,7 +134,7 @@ def render_video(twitch_video: dict, config):
                     f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
 
         if not clip.isInterval and not clip.isIntro:
-            if clip.title_alignment < 10:
+            if clip.title_alignment > 0:
                 logo = (ImageClip("/home/malchul/work/streams/stream_parser/video_generator/title_generator/out.png")
                         .set_duration(final_duration)
                         .fx(resize, height=50)  # if you need to resize...
