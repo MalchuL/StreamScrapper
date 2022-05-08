@@ -6,6 +6,9 @@ from time import sleep
 
 from moviepy.audio.AudioClip import CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
+from moviepy.video.VideoClip import ImageClip
+from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
+from moviepy.video.fx.resize import resize
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from pysubs2 import SSAFile, SSAStyle, SSAEvent, make_time
 
@@ -100,7 +103,7 @@ def render_video(twitch_video: dict, config):
         volume = clip.volume
 
         print('Adding text')
-        alignment = 1  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
+        alignment = clip.subs_alignment  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
         subs.styles['vidText'] = SSAStyle(alignment=alignment, fontname='Gilroy-ExtraBold', fontsize=25, marginl=4,
                                           marginv=-2.5, marginr=0, outline=2, outlinecolor=color2,
                                           primarycolor=color1, shadow=0)
@@ -131,7 +134,16 @@ def render_video(twitch_video: dict, config):
                     f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
 
         if not clip.isInterval and not clip.isIntro:
-            finish = VideoFileClip(rendered_path).fx(afx.volumex, volume)
+            if clip.title_alignment < 10:
+                logo = (ImageClip("/home/malchul/work/streams/stream_parser/video_generator/title_generator/out.png")
+                        .set_duration(final_duration)
+                        .fx(resize, height=50)  # if you need to resize...
+                        #.margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
+                        .set_pos(("center", "top")))
+
+                finish = CompositeVideoClip([VideoFileClip(rendered_path).fx(afx.volumex, volume), logo])
+            else:
+                finish = VideoFileClip(rendered_path).fx(afx.volumex, volume)
         else:
             finish = VideoFileClip(video_path).fx(afx.volumex, volume)
 
