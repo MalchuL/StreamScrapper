@@ -191,7 +191,6 @@ class MainWindow(QtWidgets.QMainWindow):
             color = QColor(255, 0, 0)
         palette.setColor(QPalette.Active, QPalette.Base, color)
         self.keepClip.setPalette(palette)
-        print(self.clipsList.currentItem().clip.isUsed, self.clipsList.currentItem().clip.save_to_next)
 
     def keep_next_video_clip_check(self, state):
         if self.clipsList.currentItem() is not None:
@@ -208,7 +207,6 @@ class MainWindow(QtWidgets.QMainWindow):
             color = QColor(255, 0, 0)
         palette.setColor(QPalette.Active, QPalette.Base, color)
         self.keepOnNext.setPalette(palette)
-        print(self.clipsList.currentItem().clip.isUsed, self.clipsList.currentItem().clip.save_to_next)
 
     def prev_video(self):
         if self.clipsList.count() > 0:
