@@ -20,6 +20,7 @@ class Clip:
         self.isOutro = False
         self.isInterval = False
         self.isUsed = False
+        self.save_to_next = False
         self.volume = 1
         # Getting duration of video clips to trim a percentage of the beginning off
         self.start_cut = 0
@@ -60,6 +61,7 @@ class VideoItem(QListWidgetItem):
         self.clip = clip
 
         self.keep_video(self.clip.isUsed)
+        self.keep_to_next_video(self.clip.save_to_next)
 
 
     def keep_video(self, keep):
@@ -69,3 +71,11 @@ class VideoItem(QListWidgetItem):
         else:
             self.setForeground(Qt.red)
 
+    def keep_to_next_video(self, keep):
+        self.clip.save_to_next = keep
+        if keep:
+            if not self.clip.isUsed:
+                self.setForeground(Qt.blue)
+        else:
+            if not self.clip.isUsed:
+                self.setForeground(Qt.red)

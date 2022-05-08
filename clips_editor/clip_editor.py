@@ -1,3 +1,4 @@
+import copy
 import os.path
 import pickle
 import subprocess
@@ -42,6 +43,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Code from https://gist.github.com/Orizzu/e47393efe37c9e4846f7c23f2b10c4a7
         self.clipsList.currentItemChanged.connect(self.on_clip_click)
         self.keepClip.stateChanged.connect(self.keep_clip_check)
+        self.keepOnNext.stateChanged.connect(self.keep_next_video_clip_check)
         self.volumeSlider.valueChanged.connect(self.set_volume)
 
         self.rangeSlider.startValueChanged.connect(self.start_cut_changed)
@@ -177,6 +179,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def keep_clip_check(self, state):
         if self.clipsList.currentItem() is not None:
+            if self.keepClip.isChecked():
+                self.keepOnNext.setChecked(False)
             self.clipsList.currentItem().keep_video(self.keepClip.isChecked())
         self.keepClip: QCheckBox
         palette = self.keepClip.palette()
@@ -187,6 +191,24 @@ class MainWindow(QtWidgets.QMainWindow):
             color = QColor(255, 0, 0)
         palette.setColor(QPalette.Active, QPalette.Base, color)
         self.keepClip.setPalette(palette)
+        print(self.clipsList.currentItem().clip.isUsed, self.clipsList.currentItem().clip.save_to_next)
+
+    def keep_next_video_clip_check(self, state):
+        if self.clipsList.currentItem() is not None:
+            if self.keepOnNext.isChecked():
+                self.keepClip.setChecked(False)
+            self.clipsList.currentItem().keep_to_next_video(self.keepOnNext.isChecked())
+
+        self.keepOnNext: QCheckBox
+        palette = self.keepOnNext.palette()
+
+        if self.keepOnNext.isChecked():
+            color = QColor(0, 255, 0)
+        else:
+            color = QColor(255, 0, 0)
+        palette.setColor(QPalette.Active, QPalette.Base, color)
+        self.keepOnNext.setPalette(palette)
+        print(self.clipsList.currentItem().clip.isUsed, self.clipsList.currentItem().clip.save_to_next)
 
     def prev_video(self):
         if self.clipsList.count() > 0:
@@ -219,6 +241,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if hasattr(item.clip, 'views_count'):
                 self.viewerCount.setText(f'Views: {item.clip.views_count}')
             self.keepClip.setChecked(item.clip.isUsed)
+            self.keepOnNext.setChecked(item.clip.save_to_next)
 
             # Draw slider values
 
@@ -244,6 +267,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 color = QColor(255, 0, 0)
             palette.setColor(QPalette.Active, QPalette.Base, color)
             self.keepClip.setPalette(palette)
+
+            # Keep video to next video
+            self.keepOnNext: QCheckBox
+            palette = self.keepOnNext.palette()
+
+            if self.keepOnNext.isChecked():
+                color = QColor(0, 255, 0)
+            else:
+                color = QColor(255, 0, 0)
+            palette.setColor(QPalette.Active, QPalette.Base, color)
+            self.keepOnNext.setPalette(palette)
 
             self.subsAllignmenButtonGroup.button(item.clip.subs_alignment).setChecked(True)
             self.titleAllignmenButtonGroup.button(item.clip.title_alignment).setChecked(True)
@@ -305,6 +339,10 @@ class MainWindow(QtWidgets.QMainWindow):
         clear_act.setStatusTip('Clears list of clips')
         clear_act.triggered.connect(self.clipsList.clear)
 
+        save_next_video = QAction('&Save clips for next video', self)
+        save_next_video.setStatusTip('Save clips for next to binary file')
+        save_next_video.triggered.connect(self.save_clips_to_file_for_next_video)
+
         save_act = QAction('&Save editor clips', self)
         save_act.setShortcut('Ctrl+S')
         save_act.setStatusTip('Save clips to binary file')
@@ -320,6 +358,8 @@ class MainWindow(QtWidgets.QMainWindow):
         fileMenu.addAction(load_act)
         fileMenu.addAction(clear_act)
         fileMenu.addSeparator()
+        fileMenu.addAction(save_next_video)
+        fileMenu.addSeparator()
         fileMenu.addAction(save_act)
         fileMenu.addAction(load_pickle_act)
 
@@ -331,6 +371,27 @@ class MainWindow(QtWidgets.QMainWindow):
             dumped_clips.append(clip_data)
 
         name, _ = QFileDialog.getSaveFileName(self, 'Save File', 'editor_clips_videos.clps', options=QFileDialog.DontUseNativeDialog)
+        if not name:
+            return
+
+        twitch_video = {'clips': dumped_clips}
+
+        with open(name, "wb") as f:
+            pickle.dump(twitch_video, f)
+        print('Saved object')
+
+    def save_clips_to_file_for_next_video(self):
+        self.clipsList: ThumbListWidget
+        dumped_clips = []
+        for i in range(self.clipsList.count()):
+            clip_data = self.clipsList.item(i).clip
+            if clip_data.save_to_next:
+                clip_data = copy.deepcopy(clip_data)
+                clip_data.save_to_next = False
+                clip_data.isUsed = False
+                dumped_clips.append(clip_data)
+
+        name, _ = QFileDialog.getSaveFileName(self, 'Save File', 'editor_clips_videos_for_next_video.clps', options=QFileDialog.DontUseNativeDialog)
         if not name:
             return
 
