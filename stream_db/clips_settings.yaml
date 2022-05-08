@@ -6,7 +6,7 @@ mongo_settings:
 
 
 general_settings:
-  output_folder: 'Assets/politic_26.02.2022'
+  output_folder: 'Assets/${mongo_settings.collection_name}'
 
 excluded_clips:
 #  - "/home/malchul/work/streams/stream_parser/Assets/politic_24.02.2022/dumped_clips_data.json"
