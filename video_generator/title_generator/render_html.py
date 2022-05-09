@@ -1,6 +1,6 @@
 import imgkit
 
-from video_generator.title_generator.text_styles.example_style import ExampleStyle
+from title_generator.text_styles.example_style import ExampleStyle
 
 # body = f"""
 #    <html>
@@ -32,7 +32,7 @@ def render_text(text, width=1024, out_path='out.png'):
           {style.html(text)}
         </html>
         """
-    imgkit.from_string(body, 'out.png')
+    imgkit.from_string(body, out_path)
 
 if __name__ == '__main__':
     render_text('Hello html')

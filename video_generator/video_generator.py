@@ -19,6 +19,7 @@ import moviepy.audio.fx.volumex as afx
 from twitch_parser.config.config_parser import get_yaml_config
 from video_editor.concatenate import concatenate_videoclips
 from utils.moviepy_utils import numpad_alignment_to_moviepy
+from title_generator.render_html import render_text
 
 
 def getColour(colourstring):
@@ -112,7 +113,8 @@ def render_video(twitch_video: dict, config):
             subs.append(SSAEvent(start=make_time(s=0), end=make_time(s=60), style='vidText', text=f"twitch.tv/{name}"))
         subs.save(f'subtitleFile.ass')
 
-        rendered_path = os.path.join(vid_finishedvids, f'{os.path.splitext(os.path.basename(video_path))[0]}_finished.mp4')
+        video_id = os.path.splitext(os.path.basename(video_path))[0]
+        rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
         w, h = config.video_resolution
         if not clip.isInterval and not clip.isIntro:
             print("%s duration %s" % (video_path, final_duration))
@@ -136,9 +138,11 @@ def render_video(twitch_video: dict, config):
 
         if not clip.isInterval and not clip.isIntro:
             if clip.title_alignment > 0:
-                logo = (ImageClip("/home/malchul/work/streams/stream_parser/video_generator/title_generator/out.png")
+                title_out_path = os.path.join(final_titles_path, f'{video_id}.png')
+                render_text(clip.title, width=w, out_path=title_out_path)
+                logo = (ImageClip(title_out_path)
                         .set_duration(final_duration)
-                        .fx(resize, height=50)  # if you need to resize...
+                        #.fx(resize, height=50)  # if you need to resize...
                         #.margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
                         .set_pos(numpad_alignment_to_moviepy(clip.title_alignment)))
 
@@ -194,6 +198,7 @@ fps = 30
 out_folder = 'Assets'
 vid_finishedvids = os.path.join(out_folder, 'rendered_clips')
 final_clips_path = os.path.join(out_folder, 'Final Clips')
+final_titles_path = os.path.join(out_folder, 'Titles')
 
 
 if __name__ == '__main__':
@@ -203,6 +208,7 @@ if __name__ == '__main__':
     os.makedirs(out_folder, exist_ok=True)
     os.makedirs(vid_finishedvids, exist_ok=True)
     os.makedirs(final_clips_path, exist_ok=True)
+    os.makedirs(final_titles_path, exist_ok=True)
     config = get_yaml_config('video_generator/video_generator_settings.yaml')
     clips_path = config.clips_path
     with open(clips_path, "rb") as f:
