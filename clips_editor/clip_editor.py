@@ -426,6 +426,34 @@ class MainWindow(QtWidgets.QMainWindow):
         fileMenu.addAction(save_act)
         fileMenu.addAction(load_pickle_act)
 
+
+        # Clips settings
+
+        hide_act = QAction('&Hide unsused clips', self)
+        hide_act.triggered.connect(self.hide_unsused_clips)
+
+        show_act = QAction('&Show hidden clips', self)
+        show_act.triggered.connect(self.show_hidden_clips)
+
+        fileMenu = menubar.addMenu('&Clips')
+        fileMenu.addAction(show_act)
+        fileMenu.addAction(hide_act)
+
+    def hide_unsused_clips(self):
+        self.clipsList: ThumbListWidget
+        for i in range(self.clipsList.count()):
+            clip_item = self.clipsList.item(i)
+            clip_data = clip_item.clip
+            if not clip_data.isUsed:
+                clip_item.setHidden(True)
+
+    def show_hidden_clips(self):
+        self.clipsList: ThumbListWidget
+        for i in range(self.clipsList.count()):
+            clip_item = self.clipsList.item(i)
+            clip_item.setHidden(False)
+
+
     def save_clips_to_file(self):
         self.clipsList: ThumbListWidget
         dumped_clips = []
