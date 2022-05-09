@@ -92,6 +92,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.titleTextEdit.textChanged.connect(self.save_title)
 
+        self.moveFirstPushButton.clicked.connect(self.move_first_current)
+        self.moveLastPushButton.clicked.connect(self.move_last_current)
+        self.beforePrevPushButton.clicked.connect(self.move_before_prev_current)
+        self.afterNextPushButton.clicked.connect(self.move_after_next_current)
+
         # Arrows
         QShortcut(Qt.Key_Up, self, self.prev_video)
         QShortcut(Qt.Key_Down, self, self.next_video)
@@ -129,6 +134,48 @@ class MainWindow(QtWidgets.QMainWindow):
                 new_index = current_index if current_index < self.clipsList.count() else self.clipsList.count() - 1
                 self.clipsList.setCurrentRow(new_index)
         self.update_final_duration()
+
+    def move_first_current(self):
+        if self.clipsList.count() > 0:
+            currentRow = self.clipsList.currentRow()
+            currentItem = self.clipsList.takeItem(currentRow)
+            self.clipsList.insertItem(0, currentItem)
+            self.clipsList.setCurrentRow(0)
+
+    def move_last_current(self):
+        if self.clipsList.count() > 0:
+            currentRow = self.clipsList.currentRow()
+            currentItem = self.clipsList.takeItem(currentRow)
+            self.clipsList.insertItem(self.clipsList.count(), currentItem)
+            self.clipsList.setCurrentRow(self.clipsList.count() - 1)
+
+    def move_before_prev_current(self):
+        if self.clipsList.count() > 0:
+            currentRow = self.clipsList.currentRow()
+            currentItem = self.clipsList.takeItem(currentRow)
+            for i in range(currentRow - 1, 0, -1):
+                clip_data: Clip = self.clipsList.item(i).clip
+                if clip_data.isUsed:
+                    self.clipsList.insertItem(i, currentItem)
+                    self.clipsList.setCurrentRow(i)
+                    break
+            else:
+                self.clipsList.insertItem(0, currentItem)
+                self.clipsList.setCurrentRow(0)
+
+    def move_after_next_current(self):
+        if self.clipsList.count() > 0:
+            currentRow = self.clipsList.currentRow()
+            currentItem = self.clipsList.takeItem(currentRow)
+            for i in range(currentRow, self.clipsList.count()):
+                clip_data: Clip = self.clipsList.item(i).clip
+                if clip_data.isUsed:
+                    self.clipsList.insertItem(i + 1, currentItem)
+                    self.clipsList.setCurrentRow(i + 1)
+                    break
+            else:
+                self.clipsList.insertItem(self.clipsList.count(), currentItem)
+                self.clipsList.setCurrentRow(self.clipsList.count() - 1)
 
     def set_subtitle_alignment(self, button):
         item = self.clipsList.currentItem()

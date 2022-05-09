@@ -41,7 +41,13 @@
      </property>
      <item>
       <layout class="QGridLayout" name="clipsLayout">
-       <item row="2" column="0">
+       <item row="4" column="0">
+        <widget class="QLineEdit" name="baseFolderEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="ThumbListWidget" name="clipsList"/>
+       </item>
+       <item row="3" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>Base Clips Folder</string>
@@ -55,11 +61,37 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLineEdit" name="baseFolderEdit"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="ThumbListWidget" name="clipsList"/>
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="moveFirstPushButton">
+           <property name="text">
+            <string>Move first</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="moveLastPushButton">
+           <property name="text">
+            <string>Move last</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="beforePrevPushButton">
+           <property name="text">
+            <string>Before prev</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="afterNextPushButton">
+           <property name="text">
+            <string>After next</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -603,7 +635,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="titleAllignmenButtonGroup"/>
   <buttongroup name="subsAllignmenButtonGroup"/>
+  <buttongroup name="titleAllignmenButtonGroup"/>
  </buttongroups>
 </ui>
