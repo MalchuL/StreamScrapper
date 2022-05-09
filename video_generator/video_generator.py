@@ -18,6 +18,7 @@ import moviepy.audio.fx.volumex as afx
 #bgr format with &h at start and & at end
 from twitch_parser.config.config_parser import get_yaml_config
 from video_editor.concatenate import concatenate_videoclips
+from utils.moviepy_utils import numpad_alignment_to_moviepy
 
 
 def getColour(colourstring):
@@ -139,7 +140,7 @@ def render_video(twitch_video: dict, config):
                         .set_duration(final_duration)
                         .fx(resize, height=50)  # if you need to resize...
                         #.margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
-                        .set_pos(("center", "top")))
+                        .set_pos(numpad_alignment_to_moviepy(clip.title_alignment)))
 
                 finish = CompositeVideoClip([VideoFileClip(rendered_path).fx(afx.volumex, volume), logo])
             else:
