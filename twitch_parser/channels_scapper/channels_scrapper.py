@@ -27,17 +27,30 @@ class ChannelsScrapper:
 
         return channels
 
+    def _get_channels_by_logins(self, logins):
+        twitch_api = self.twitch_api
+        channels = []
+        for id in range(0, len(logins), self.PAGINATION_MAXIMUM):
+            sub_logins = list(logins[id: id + self.PAGINATION_MAXIMUM])
+            users = twitch_api.get_users(logins=sub_logins)['data']
+            logging.debug(f'get user from ids {users}')
+            channels.extend(users)
+
+        return channels
+
+
+
     def get_channels_by_ids(self, user_ids):
         channels = self._get_available_channels(user_ids)
 
         # Log unfinded channels
-        channels_user_ids = [channel['id'] for channel in channels]
-        excluded_channels = set(user_ids).difference(set(channels_user_ids))
+        channels_user_ids = [str(channel['id']) for channel in channels]
+        excluded_channels = set(map(str, user_ids)).difference(set(channels_user_ids))
         if excluded_channels:
             logging.info(f'{excluded_channels} was not founded')
             excluded_names = []
             for channel in channels:
-                if channel['user_id'] in excluded_channels:
+                if channel['id'] in excluded_channels:
                     excluded_names.append(channel['user_name'])
             logging.info(f'{excluded_names} was not founded, please find this channels manualy')
 
@@ -48,6 +61,11 @@ class ChannelsScrapper:
                 filtered_channels.append(channel)
 
         return filtered_channels
+
+    def get_channels_by_logins(self, logins):
+        channels = self._get_channels_by_logins(logins)
+        user_ids = [channel['id'] for channel in channels]
+        return self.get_channels_by_ids(user_ids)
 
     def get_channels_from_streams(self, streams=[]):
         user_ids = [stream['user_id'] for stream in streams]
