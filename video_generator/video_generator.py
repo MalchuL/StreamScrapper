@@ -2,6 +2,7 @@ import datetime
 import os
 import pickle
 import random
+import subprocess
 import time
 from time import sleep
 
@@ -22,6 +23,14 @@ from video_editor.concatenate import concatenate_videoclips
 from utils.moviepy_utils import numpad_alignment_to_moviepy
 from title_generator.render_html import render_text
 
+
+def duration_for_file(filename):
+    result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+                             "format=duration", "-of",
+                             "default=noprint_wrappers=1:nokey=1", filename],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT)
+    return float(result.stdout)
 
 def getColour(colourstring):
     if colourstring == "Blue":
@@ -105,7 +114,6 @@ def render_video(twitch_video: dict, config):
         final_duration = round(end_trim - start_trim, 1)
 
         timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'{clip.streamer_name}/{clip.title}'])
-        summary_time += final_duration
         volume = clip.volume
 
         print('Adding text')
@@ -139,6 +147,8 @@ def render_video(twitch_video: dict, config):
                 print("%s start trim %s" % (video_path, start_trim))
                 os.system(
                     f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
+
+        summary_time += duration_for_file(rendered_path)  # Update time after rendering
 
         if not clip.isInterval and not clip.isIntro:
             if clip.title_alignment > 0:
