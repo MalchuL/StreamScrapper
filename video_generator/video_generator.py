@@ -2,6 +2,7 @@ import datetime
 import os
 import pickle
 import random
+import time
 from time import sleep
 
 from moviepy.audio.AudioClip import CompositeAudioClip
@@ -79,7 +80,8 @@ def render_video(twitch_video: dict, config):
     render_max_progress = amount * 3 + 1 + 1
     print("Beginning Rendering")
     final_clips = []
-
+    timecodes = []
+    summary_time = 0
     for i, clip in enumerate(clips):
         clip: Clip
         if not clip.isUsed:
@@ -102,6 +104,8 @@ def render_video(twitch_video: dict, config):
         end_trim = round(clip.end_cut, 1)
         final_duration = round(end_trim - start_trim, 1)
 
+        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'{clip.streamer_name}/{clip.title}'])
+        summary_time += final_duration
         volume = clip.volume
 
         print('Adding text')
@@ -190,7 +194,11 @@ def render_video(twitch_video: dict, config):
                                              fps=fps,
                                              threads=16)
         sleep(5)
-
+    with open(f'{timecodes_path}/TwitchMoments_{current_date}.txt', 'w') as f:
+        timecodes_str = ''
+        for str_time, description in timecodes:
+            timecodes_str += f'{str_time} - {description}\n'
+        f.write(timecodes_str)
 
 inclide_streamer_name =True
 fps = 30
@@ -199,6 +207,7 @@ out_folder = 'Assets'
 vid_finishedvids = os.path.join(out_folder, 'rendered_clips')
 final_clips_path = os.path.join(out_folder, 'Final Clips')
 final_titles_path = os.path.join(out_folder, 'Titles')
+timecodes_path = os.path.join(out_folder, 'Timecodes')
 
 
 if __name__ == '__main__':
@@ -209,6 +218,7 @@ if __name__ == '__main__':
     os.makedirs(vid_finishedvids, exist_ok=True)
     os.makedirs(final_clips_path, exist_ok=True)
     os.makedirs(final_titles_path, exist_ok=True)
+    os.makedirs(timecodes_path, exist_ok=True)
     config = get_yaml_config('video_generator/video_generator_settings.yaml')
     clips_path = config.clips_path
     with open(clips_path, "rb") as f:
