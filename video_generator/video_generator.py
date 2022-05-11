@@ -113,7 +113,7 @@ def render_video(twitch_video: dict, config):
         end_trim = round(clip.end_cut, 1)
         final_duration = round(end_trim - start_trim, 1)
 
-        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'{clip.streamer_name}/{clip.title}'])
+        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'{clip.streamer_name} | {clip.title}'])
         volume = clip.volume
 
         print('Adding text')
