@@ -43,6 +43,21 @@ def process_channel(channel):
         channel["viewer_count"] = math.floor(np.median(channel["viewer_count"]))
     return channel
 
+def parse_excluded_channels(excluded_channels):
+    channels = []
+    for name in excluded_channels:
+        channels.append(name.lower())
+    return channels
+
+def filter_channels(channels, excluded_channels):
+    resuls_channels = []
+    for channel in channels:
+        if channel["user_login"].lower() not in excluded_channels and channel["user_name"].lower() not in excluded_channels:
+            resuls_channels.append(channel)
+        else:
+            print(f'Exclude channel: {channel["user_login"]}')
+    return resuls_channels
+
 if __name__ == "__main__":
 
     user_secrets = get_yaml_config('user_secrets.yaml')
@@ -66,6 +81,10 @@ if __name__ == "__main__":
     channel_filter = KeyValueComparator(config.channels_condition)
     channels = list(map(process_channel, channels)) # Apply some changes for processing
     channels = [channel for channel in channels if channel_filter.check_condition(channel)]
+
+    excluded_channels = parse_excluded_channels(config.excluded_channels)
+    channels = filter_channels(channels, excluded_channels)
+
 
     excluded_clips = []
     if config.excluded_clips is not None:
