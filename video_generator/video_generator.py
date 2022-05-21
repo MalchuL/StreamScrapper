@@ -71,6 +71,14 @@ def test_existence(video_data):
                 print('Error in clip', clip)
                 raise
 
+def get_translation(path):
+    if path is None:
+        return {'clip': None, 'duration': None}
+    else:
+        time = duration_for_file(path)
+        return {'clip': VideoFileClip(path), 'duration': time}
+
+
 def render_video(twitch_video: dict, config):
     clips = twitch_video['clips']
     color1 = getColour(twitch_video.get('color1', "Black"))
@@ -87,6 +95,9 @@ def render_video(twitch_video: dict, config):
         if clip.isUsed:
             amount += 1
     render_max_progress = amount * 3 + 1 + 1
+
+    translation = get_translation(config.screen_transition)
+
     print("Beginning Rendering")
     final_clips = []
     timecodes = []
@@ -128,7 +139,7 @@ def render_video(twitch_video: dict, config):
         video_id = os.path.splitext(os.path.basename(video_path))[0]
         rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
         w, h = config.video_resolution
-        if not clip.isInterval and not clip.isIntro:
+        if not clip.isIntro:
             print("%s duration %s" % (video_path, final_duration))
             if end_trim == 0 and start_trim == 0:
                 print("%s no trim" % video_path)
@@ -149,8 +160,10 @@ def render_video(twitch_video: dict, config):
                     f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
 
         summary_time += duration_for_file(rendered_path)  # Update time after rendering
+        if clip.isInterval and translation['clip'] is not None:
+            summary_time += translation['duration']
 
-        if not clip.isInterval and not clip.isIntro:
+        if clip.isIntro:
             if clip.title_alignment > 0:
                 title_out_path = os.path.join(final_titles_path, f'{video_id}.png')
                 render_text(clip.title, width=w, out_path=title_out_path)
@@ -165,7 +178,8 @@ def render_video(twitch_video: dict, config):
                 finish = VideoFileClip(rendered_path).fx(afx.volumex, volume)
         else:
             finish = VideoFileClip(video_path).fx(afx.volumex, volume)
-
+        if clip.isInterval and translation['clip'] and i < len(clips) - 1:
+            final_clips.append(translation['clip'])
         final_clips.append(finish)
 
     # TODO add music
