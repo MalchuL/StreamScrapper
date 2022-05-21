@@ -576,6 +576,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="intervalCheckBox">
+         <property name="text">
+          <string>Apply transition after</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QTextEdit" name="titleTextEdit"/>
        </item>
        <item>
@@ -635,7 +642,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="subsAllignmenButtonGroup"/>
   <buttongroup name="titleAllignmenButtonGroup"/>
+  <buttongroup name="subsAllignmenButtonGroup"/>
  </buttongroups>
 </ui>

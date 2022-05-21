@@ -43,6 +43,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Code from https://gist.github.com/Orizzu/e47393efe37c9e4846f7c23f2b10c4a7
         self.clipsList.currentItemChanged.connect(self.on_clip_click)
         self.keepClip.stateChanged.connect(self.keep_clip_check)
+        self.intervalCheckBox.stateChanged.connect(self.apply_transtion)
         self.keepOnNext.stateChanged.connect(self.keep_next_video_clip_check)
         self.volumeSlider.valueChanged.connect(self.set_volume)
 
@@ -241,6 +242,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clipWidget.set_volume(value)
 
 
+    def apply_transtion(self, state):
+        if self.clipsList.currentItem() is not None:
+            self.clipsList.currentItem().clip.isInterval = self.intervalCheckBox.isChecked()
+
 
     def keep_clip_check(self, state):
         if self.clipsList.currentItem() is not None:
@@ -305,6 +310,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.viewerCount.setText(f'Views: {item.clip.views_count}')
             self.keepClip.setChecked(item.clip.isUsed)
             self.keepOnNext.setChecked(item.clip.save_to_next)
+            self.intervalCheckBox.setChecked(item.clip.isInterval)
 
             # Draw slider values
 
