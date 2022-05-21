@@ -178,9 +178,9 @@ def render_video(twitch_video: dict, config):
                 finish = VideoFileClip(rendered_path).fx(afx.volumex, volume)
         else:
             finish = VideoFileClip(video_path).fx(afx.volumex, volume)
+        final_clips.append(finish)
         if clip.isInterval and translation['clip'] and i < len(clips) - 1:
             final_clips.append(translation['clip'])
-        final_clips.append(finish)
 
     # TODO add music
     musicFiles = [] #getFileNames(f'{settings.asset_file_path}/Music')
