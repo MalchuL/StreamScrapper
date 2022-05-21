@@ -163,7 +163,7 @@ def render_video(twitch_video: dict, config):
         if clip.isInterval and translation['clip'] is not None:
             summary_time += translation['duration']
 
-        if clip.isIntro:
+        if not clip.isIntro:
             if clip.title_alignment > 0:
                 title_out_path = os.path.join(final_titles_path, f'{video_id}.png')
                 render_text(clip.title, width=w, out_path=title_out_path)
@@ -179,7 +179,7 @@ def render_video(twitch_video: dict, config):
         else:
             finish = VideoFileClip(video_path).fx(afx.volumex, volume)
         final_clips.append(finish)
-        if clip.isInterval and translation['clip'] and i < len(clips) - 1:
+        if clip.isInterval and translation['clip'] is not None and i < len(clips) - 1:
             final_clips.append(translation['clip'])
 
     # TODO add music
