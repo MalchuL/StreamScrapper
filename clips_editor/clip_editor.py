@@ -44,6 +44,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clipsList.currentItemChanged.connect(self.on_clip_click)
         self.keepClip.stateChanged.connect(self.keep_clip_check)
         self.intervalCheckBox.stateChanged.connect(self.apply_transtion)
+        self.srCheckBox.stateChanged.connect(self.apply_sr)
         self.keepOnNext.stateChanged.connect(self.keep_next_video_clip_check)
         self.volumeSlider.valueChanged.connect(self.set_volume)
 
@@ -246,6 +247,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.clipsList.currentItem() is not None:
             self.clipsList.currentItem().clip.isInterval = self.intervalCheckBox.isChecked()
 
+    def apply_sr(self, state):
+        if self.clipsList.currentItem() is not None:
+            self.clipsList.currentItem().clip.apply_sr = self.srCheckBox.isChecked()
 
     def keep_clip_check(self, state):
         if self.clipsList.currentItem() is not None:
@@ -311,7 +315,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.keepClip.setChecked(item.clip.isUsed)
             self.keepOnNext.setChecked(item.clip.save_to_next)
             self.intervalCheckBox.setChecked(item.clip.isInterval)
-
+            self.srCheckBox.setChecked(item.clip.apply_sr)
             # Draw slider values
 
             # We should disconnect end value changed because it would be called
@@ -508,6 +512,8 @@ class MainWindow(QtWidgets.QMainWindow):
             twitch_video = pickle.load(f)
         dumped_clips = twitch_video['clips']
         for clip in dumped_clips:
+            if not hasattr(clip, 'apply_sr'):
+                clip.apply_sr = False
             clip_name = clip.streamer_name + '/' + clip.clip_name
             video_item = VideoItem(text=clip_name, clip=clip)
             self.clipsList.addItem(video_item)

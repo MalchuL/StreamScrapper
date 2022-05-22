@@ -20,6 +20,7 @@ class Clip:
         self.isOutro = False
         self.isInterval = False
         self.isUsed = False
+        self.apply_sr = False
         self.save_to_next = False
         self.volume = 1
         # Getting duration of video clips to trim a percentage of the beginning off
