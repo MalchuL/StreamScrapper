@@ -102,6 +102,10 @@ def render_video(twitch_video: dict, config):
     final_clips = []
     timecodes = []
     summary_time = 0
+    if config.intro_video is not None:
+        final_clips.append(VideoFileClip(config.intro_video))
+        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), 'Intro'])
+        summary_time += duration_for_file(config.intro_video)
     for i, clip in enumerate(clips):
         clip: Clip
         if not clip.isUsed:
@@ -124,7 +128,7 @@ def render_video(twitch_video: dict, config):
         end_trim = round(clip.end_cut, 1)
         final_duration = round(end_trim - start_trim, 1)
 
-        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'{clip.streamer_name} | {clip.title}'])
+        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'https://www.twitch.tv/{clip.streamer_name} | {clip.title}'])
         volume = clip.volume
 
         print('Adding text')
