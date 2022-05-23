@@ -41,5 +41,13 @@ Install MongoDB Compass https://www.mongodb.com/try/download/compass
 ## Fast clips dumping
 1. Run twitch_downloader.py
 
+## Install superresolution library
+git clone https://github.com/sberbank-ai/Real-ESRGAN
+cd Real-ESRGAN
+download weights https://drive.google.com/drive/folders/16PlVKhTNkSyWFx52RPb2hXPIQveNGbxS
 
 
+# Making YouTube thumbnail
+1. Find video and frame inside downloaded videos 
+2. Run `ffmpeg -ss 00:00:26 -i 'input_video.mp4' -frames:v 1 -q:v 2 output.jpg`
+3. Remove background on `https://www.remove.bg/ru/upload`

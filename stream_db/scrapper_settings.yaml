@@ -5,7 +5,7 @@ scheduler:
 
 mongo_settings:
   db_name: "twitch_streams"
-  collection_name: 'streams_irl_08.05.2022'
+  collection_name: 'streams_irl_22.05.2022'
   primary_key: null  # Stream id
 
 
