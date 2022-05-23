@@ -207,9 +207,9 @@ def render_video(twitch_video: dict, config, platform_data=None):
                         result_clips.append(img_clip)
                 finish = CompositeVideoClip(result_clips)
             else:
-                finish = VideoFileClip(rendered_path).fx(afx.volumex, volume)
+                finish = VideoFileClip(rendered_path).fx(afx.volumex, volume).fx(resize, newsize=(w, h))
         else:
-            finish = VideoFileClip(video_path).fx(afx.volumex, volume)
+            finish = VideoFileClip(video_path).fx(afx.volumex, volume).fx(resize, newsize=(w, h))
         final_clips.append(finish)
         if clip.isInterval and translation['clip'] is not None and i < len(clips) - 1:
             final_clips.append(translation['clip'])
