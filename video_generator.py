@@ -2,6 +2,7 @@ import datetime
 import os
 import pickle
 import random
+import shutil
 import subprocess
 import time
 from time import sleep
@@ -19,9 +20,10 @@ import moviepy.audio.fx.volumex as afx
 
 #bgr format with &h at start and & at end
 from twitch_parser.config.config_parser import get_yaml_config
-from video_editor.concatenate import concatenate_videoclips
-from utils.moviepy_utils import numpad_alignment_to_moviepy
-from title_generator.render_html import render_text
+from video_generator.video_editor.concatenate import concatenate_videoclips
+from video_generator.utils.moviepy_utils import numpad_alignment_to_moviepy
+from video_generator.title_generator.render_html import render_text
+from video_generator.subtitle_generator.twitch_data import TwitchData
 
 
 def duration_for_file(filename):
@@ -79,7 +81,7 @@ def get_translation(path):
         return {'clip': VideoFileClip(path), 'duration': time}
 
 
-def render_video(twitch_video: dict, config):
+def render_video(twitch_video: dict, config, platform_data=None):
     clips = twitch_video['clips']
     color1 = getColour(twitch_video.get('color1', "Black"))
     color2 = getColour(twitch_video.get('color2', "White"))
@@ -112,7 +114,6 @@ def render_video(twitch_video: dict, config):
             continue
         name = clip.streamer_name
         video_path = clip.filename
-        subs = SSAFile()
 
         if name is not None and name not in streamers_in_cred:
             credits.append(f"Streamer: {clip.streamer_name}")
@@ -124,44 +125,37 @@ def render_video(twitch_video: dict, config):
         if clip.end_cut is None:
             clip.end_cut = 0
 
-        start_trim = round(clip.start_cut, 1)
-        end_trim = round(clip.end_cut, 1)
+        start_trim = max(round(clip.start_cut, 1), 0.0)
+        end_trim = max(round(clip.end_cut, 1), 0.0)
         final_duration = round(end_trim - start_trim, 1)
 
-        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'https://www.twitch.tv/{clip.streamer_name} | {clip.title}'])
+        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'{platform_data.get_raw_link(clip)} | {clip.title}'])
         volume = clip.volume
 
-        print('Adding text')
-        if inclide_streamer_name and clip.subs_alignment > 0:
-            alignment = clip.subs_alignment  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
-            subs.styles['vidText'] = SSAStyle(alignment=alignment, fontname='Gilroy-ExtraBold', fontsize=25, marginl=4,
-                                              marginv=2.5, marginr=0, outline=2, outlinecolor=color2,
-                                              primarycolor=color1, shadow=0)
-            subs.append(SSAEvent(start=make_time(s=0), end=make_time(s=60), style='vidText', text=f"twitch.tv/{name}"))
-        subs.save(f'subtitleFile.ass')
-
         video_id = os.path.splitext(os.path.basename(video_path))[0]
-        rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
-        w, h = config.video_resolution
-        if not clip.isIntro:
-            print("%s duration %s" % (video_path, final_duration))
-            if end_trim == 0 and start_trim == 0:
-                print("%s no trim" % video_path)
-                os.system(
-                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
-            elif end_trim > 0 and start_trim > 0:
-                print("%s start trim %s and end trim %s" % (video_path, start_trim, end_trim))
-                os.system(
-                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -t {final_duration} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
-            elif end_trim > 0 and start_trim == 0:
-                print("%s end trim %s" % (video_path, end_trim))
 
-                os.system(
-                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -t {end_trim} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
-            elif end_trim == 0 and start_trim > 0:
-                print("%s start trim %s" % (video_path, start_trim))
-                os.system(
-                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -vf \"ass=subtitleFile.ass, scale={w}:{h}\" \"{rendered_path}\"")
+        print('Adding text')
+        if inclide_streamer_name and clip.subs_alignment > 0 and not clip.isIntro:
+            alignment = clip.subs_alignment  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
+            # Render streamer name
+            subtitle_out_path = os.path.join(final_subtitles_path, f'{video_id}.png')
+            subtitle_out_path = platform_data.generate_streamer_subtitle(clip, subtitle_out_path)
+            subtitle_logo = (ImageClip(subtitle_out_path)
+                            .set_duration(final_duration)
+                            # .fx(resize, height=50)  # if you need to resize...
+                            # .margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
+                            .set_pos(numpad_alignment_to_moviepy(alignment)))
+        else:
+            subtitle_logo = None
+
+        rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
+        if config.ffmpeg_copy:
+            os.system(
+                f"ffmpeg -y  -i \"{video_path}\" \"{rendered_path}\"")
+        else:
+            shutil.copyfile(video_path, rendered_path)
+
+        w, h = config.video_resolution
 
         summary_time += duration_for_file(rendered_path)  # Update time after rendering
         if clip.isInterval and translation['clip'] is not None:
@@ -176,8 +170,16 @@ def render_video(twitch_video: dict, config):
                         #.fx(resize, height=50)  # if you need to resize...
                         #.margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
                         .set_pos(numpad_alignment_to_moviepy(clip.title_alignment)))
+            else:
+                logo = None
 
-                finish = CompositeVideoClip([VideoFileClip(rendered_path).fx(afx.volumex, volume), logo])
+            if logo is not None or subtitle_logo is not None:
+                video_clip = VideoFileClip(rendered_path).subclip(float(start_trim), float(end_trim)).fx(resize, width=w, height=h).fx(afx.volumex, volume)
+                result_clips = [video_clip]
+                for img_clip in [subtitle_logo, logo]:
+                    if img_clip is not None:
+                        result_clips.append(img_clip)
+                finish = CompositeVideoClip(result_clips)
             else:
                 finish = VideoFileClip(rendered_path).fx(afx.volumex, volume)
         else:
@@ -220,7 +222,7 @@ def render_video(twitch_video: dict, config):
     else:
         final_vid_with_music.write_videofile(f'{final_clips_path}/TwitchMoments_{current_date}.mp4',
                                              fps=fps,
-                                             threads=16)
+                                             threads=8)
         sleep(5)
     with open(f'{timecodes_path}/TwitchMoments_{current_date}.txt', 'w') as f:
         timecodes_str = ''
@@ -235,6 +237,7 @@ out_folder = 'Assets'
 vid_finishedvids = os.path.join(out_folder, 'rendered_clips')
 final_clips_path = os.path.join(out_folder, 'Final Clips')
 final_titles_path = os.path.join(out_folder, 'Titles')
+final_subtitles_path = os.path.join(out_folder, 'Subtitles')
 timecodes_path = os.path.join(out_folder, 'Timecodes')
 
 
@@ -247,11 +250,20 @@ if __name__ == '__main__':
     os.makedirs(final_clips_path, exist_ok=True)
     os.makedirs(final_titles_path, exist_ok=True)
     os.makedirs(timecodes_path, exist_ok=True)
+    os.makedirs(final_subtitles_path, exist_ok=True)
     config = get_yaml_config('video_generator/video_generator_settings.yaml')
     clips_path = config.clips_path
     with open(clips_path, "rb") as f:
         twitch_video = pickle.load(f)
-    for clip in twitch_video['clips']:
-        print(clip)
+    # for clip in twitch_video['clips']:
+    #     print(clip)
     test_existence(twitch_video)
-    render_video(twitch_video, config)
+
+    if config.platform == 'twitch':
+        from twitchAPI import Twitch, AuthScope
+        user_secrets = get_yaml_config('user_secrets.yaml')
+        twitch = Twitch(user_secrets.app_id, user_secrets.app_secret,
+                        target_app_auth_scope=[AuthScope.USER_READ_FOLLOWS])
+        platform_data = TwitchData(twitch)
+
+    render_video(twitch_video, config, platform_data=platform_data)

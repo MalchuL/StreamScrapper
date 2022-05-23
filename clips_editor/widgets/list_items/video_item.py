@@ -28,6 +28,8 @@ class Clip:
         self.end_cut = self.vid_duration
         self.subs_alignment = DEFAULT_SUBS_ALIGNMENT
         self.title_alignment = DEFAULT_TITLE_ALIGNMENT
+        if clip_json is None:
+            clip_json = {'title': ''}
         self.title = clip_json["title"]
 
         #clip_json example
