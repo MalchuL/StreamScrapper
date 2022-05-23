@@ -2,7 +2,6 @@ clips_path: '/home/malchul/work/streams/stream_parser/Assets/streams_irl_18.05.2
 video_resolution: [ 1920, 1080 ]
 
 platform: twitch
-ffmpeg_copy: False  # If you got ffmpeg warning on video compilation
 
 screen_transition: '/home/malchul/work/streams/stream_parser/Assets/Translation/screen_translation.mp4'
 intro_video: '/home/malchul/work/streams/stream_parser/Assets/Intro/Podtekatel_channel.mp4'

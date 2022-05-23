@@ -77,8 +77,13 @@ def get_translation(path):
     if path is None:
         return {'clip': None, 'duration': None}
     else:
-        time = duration_for_file(path)
-        return {'clip': VideoFileClip(path), 'duration': time}
+        video_id = os.path.splitext(os.path.basename(path))[0]
+        rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
+        os.system(
+            f"ffmpeg -y -fflags genpts -i \"{path}\" \"{rendered_path}\"")
+
+        time = duration_for_file(rendered_path)
+        return {'clip': VideoFileClip(rendered_path), 'duration': time}
 
 
 def render_video(twitch_video: dict, config, platform_data=None):
@@ -105,9 +110,14 @@ def render_video(twitch_video: dict, config, platform_data=None):
     timecodes = []
     summary_time = 0
     if config.intro_video is not None:
-        final_clips.append(VideoFileClip(config.intro_video))
+        video_id = os.path.splitext(os.path.basename(config.intro_video))[0]
+        rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
+        os.system(
+            f"ffmpeg -y -fflags genpts -i \"{config.intro_video}\" \"{rendered_path}\"")
+
+        final_clips.append(VideoFileClip(rendered_path))
         timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), 'Intro'])
-        summary_time += duration_for_file(config.intro_video)
+        summary_time += duration_for_file(rendered_path)
     for i, clip in enumerate(clips):
         clip: Clip
         if not clip.isUsed:
@@ -125,9 +135,9 @@ def render_video(twitch_video: dict, config, platform_data=None):
         if clip.end_cut is None:
             clip.end_cut = 0
 
-        start_trim = max(round(clip.start_cut, 1), 0.0)
-        end_trim = max(round(clip.end_cut, 1), 0.0)
-        final_duration = round(end_trim - start_trim, 1)
+        start_trim = max(round(clip.start_cut, 2), 0.0)
+        end_trim = max(round(clip.end_cut, 2), 0.0)
+        final_duration = round(clip.end_cut - clip.start_cut, 2)
 
         timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), f'{platform_data.get_raw_link(clip)} | {clip.title}'])
         volume = clip.volume
@@ -149,11 +159,27 @@ def render_video(twitch_video: dict, config, platform_data=None):
             subtitle_logo = None
 
         rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
-        if config.ffmpeg_copy:
-            os.system(
-                f"ffmpeg -y  -i \"{video_path}\" \"{rendered_path}\"")
-        else:
-            shutil.copyfile(video_path, rendered_path)
+
+        if not clip.isIntro:
+            print("%s duration %s" % (video_path, final_duration))
+            if end_trim == 0 and start_trim == 0:
+                print("%s no trim" % video_path)
+                os.system(
+                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" \"{rendered_path}\"")
+            elif end_trim > 0 and start_trim > 0:
+                print("%s start trim %s and end trim %s" % (video_path, start_trim, end_trim))
+                os.system(
+                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} -t {final_duration} \"{rendered_path}\"")
+            elif end_trim > 0 and start_trim == 0:
+                print("%s end trim %s" % (video_path, end_trim))
+
+                os.system(
+                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -t {end_trim} \"{rendered_path}\"")
+            elif end_trim == 0 and start_trim > 0:
+                print("%s start trim %s" % (video_path, start_trim))
+                os.system(
+                    f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} \"{rendered_path}\"")
+
 
         w, h = config.video_resolution
 
@@ -174,7 +200,7 @@ def render_video(twitch_video: dict, config, platform_data=None):
                 logo = None
 
             if logo is not None or subtitle_logo is not None:
-                video_clip = VideoFileClip(rendered_path).subclip(float(start_trim), float(end_trim)).fx(resize, width=w, height=h).fx(afx.volumex, volume)
+                video_clip = VideoFileClip(rendered_path).fx(afx.volumex, volume).fx(resize, newsize=(w, h))
                 result_clips = [video_clip]
                 for img_clip in [subtitle_logo, logo]:
                     if img_clip is not None:
@@ -222,7 +248,7 @@ def render_video(twitch_video: dict, config, platform_data=None):
     else:
         final_vid_with_music.write_videofile(f'{final_clips_path}/TwitchMoments_{current_date}.mp4',
                                              fps=fps,
-                                             threads=8)
+                                             threads=16)
         sleep(5)
     with open(f'{timecodes_path}/TwitchMoments_{current_date}.txt', 'w') as f:
         timecodes_str = ''
