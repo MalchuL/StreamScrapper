@@ -144,19 +144,6 @@ def render_video(twitch_video: dict, config, platform_data=None):
 
         video_id = os.path.splitext(os.path.basename(video_path))[0]
 
-        print('Adding text')
-        if inclide_streamer_name and clip.subs_alignment > 0 and not clip.isIntro:
-            alignment = clip.subs_alignment  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
-            # Render streamer name
-            subtitle_out_path = os.path.join(final_subtitles_path, f'{video_id}.png')
-            subtitle_out_path = platform_data.generate_streamer_subtitle(clip, subtitle_out_path)
-            subtitle_logo = (ImageClip(subtitle_out_path)
-                            .set_duration(final_duration)
-                            # .fx(resize, height=50)  # if you need to resize...
-                            # .margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
-                            .set_pos(numpad_alignment_to_moviepy(alignment)))
-        else:
-            subtitle_logo = None
 
         rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
 
@@ -180,10 +167,25 @@ def render_video(twitch_video: dict, config, platform_data=None):
                 os.system(
                     f"ffmpeg -y -fflags genpts -i \"{video_path}\" -ss {start_trim} \"{rendered_path}\"")
 
+        final_duration = duration_for_file(rendered_path)
+
+        print('Adding text')
+        if inclide_streamer_name and clip.subs_alignment > 0 and not clip.isIntro:
+            alignment = clip.subs_alignment  #: Numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics)
+            # Render streamer name
+            subtitle_out_path = os.path.join(final_subtitles_path, f'{video_id}.png')
+            subtitle_out_path = platform_data.generate_streamer_subtitle(clip, subtitle_out_path)
+            subtitle_logo = (ImageClip(subtitle_out_path)
+                             .set_duration(final_duration)
+                             # .fx(resize, height=50)  # if you need to resize...
+                             # .margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
+                             .set_pos(numpad_alignment_to_moviepy(alignment)))
+        else:
+            subtitle_logo = None
 
         w, h = config.video_resolution
 
-        summary_time += duration_for_file(rendered_path)  # Update time after rendering
+        summary_time += final_duration  # Update time after rendering
         if clip.isInterval and translation['clip'] is not None:
             summary_time += translation['duration']
 
