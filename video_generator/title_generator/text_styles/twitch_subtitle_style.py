@@ -3,9 +3,9 @@ from .style import Style
 
 class TwitchSubtitleStyle(Style):
     def html(self, text):
-        return f"""<div class="created">
-                     <h1 class="text">{text}</h1>
-                   </div>"""
+        return f"""
+                  <h1 class="created" class="text">{text}</h1>
+                   """
 
     def css(self, user_profile_link):
         return f"""
@@ -17,8 +17,10 @@ class TwitchSubtitleStyle(Style):
                   color: #274046;
                   -webkit-text-stroke: 15px #E6DADA;
                   font-size: 300%;
-                  padding-left: 3em;
+                  padding-left: 2.5em;
                   padding-right: 30px;
+                  padding-top: 10px;
+                  padding-bottom: 10px;
                   height: 50px;
                 }}
                 .created {{
@@ -34,7 +36,5 @@ class TwitchSubtitleStyle(Style):
                   display: flex;
                   flex-direction: column;
                   align-items: center;
-                  
-           
                 }}
                 """
