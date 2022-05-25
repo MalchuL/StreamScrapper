@@ -19,8 +19,8 @@ class TwitchSubtitleStyle(Style):
                   font-size: 300%;
                   padding-left: 2.5em;
                   padding-right: 30px;
-                  padding-top: 10px;
-                  padding-bottom: 10px;
+                  padding-top: 15px;
+                  padding-bottom: 15px;
                   height: 50px;
                 }}
                 .created {{
