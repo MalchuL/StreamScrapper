@@ -37,4 +37,5 @@ def render_text(text, width=1024, out_path='out.png', style: Style=ExampleStyle(
     imgkit.from_string(body, out_path)
 
 if __name__ == '__main__':
-    render_text('twitch.tv/uselessmouth', width=0, style=SubtitleStyle(), css_kwargs=dict(user_profile_link='https://static-cdn.jtvnw.net/jtv_user_pictures/6b6b478a-e651-4d81-81c8-064c40b1aa97-profile_image-70x70.png'))
+    #render_text('twitch.tv/uselessmouth', width=0, style=SubtitleStyle(), css_kwargs=dict(user_profile_link='https://static-cdn.jtvnw.net/jtv_user_pictures/6b6b478a-e651-4d81-81c8-064c40b1aa97-profile_image-70x70.png'))
+    render_text('Когда попал в жидкую нарезку', width=1920)

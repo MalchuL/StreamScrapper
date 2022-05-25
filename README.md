@@ -28,7 +28,8 @@ Install MongoDB Compass https://www.mongodb.com/try/download/compass
 2. python stream_db/run_dumping.py 
 
 ## Dumping clips from mongo db
-1. python stream_db/download_clips.py 
+1. export PYTHONPATH=`pwd`
+2. python stream_db/download_clips.py 
 
 ## Runs clips editor
 1. export PYTHONPATH=`pwd`
@@ -36,7 +37,7 @@ Install MongoDB Compass https://www.mongodb.com/try/download/compass
 
 ## Merging clips
 1. export PYTHONPATH=`pwd`
-3. python video_generator/video_generator.py
+3. python video_generator.py
 
 ## Fast clips dumping
 1. Run twitch_downloader.py

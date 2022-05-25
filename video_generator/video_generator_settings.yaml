@@ -1,7 +1,9 @@
-clips_path: '/home/malchul/work/streams/stream_parser/Assets/streams_irl_18.05.2022/editor_clips_videos_res.clps'
+clips_path: '/home/malchul/work/streams/stream_parser/Assets/streams_irl_22.05.2022/editor_clips_videos.clps'
 video_resolution: [ 1920, 1080 ]
+intro_from_clip: 1
 
 platform: twitch
 
+
 screen_transition: '/home/malchul/work/streams/stream_parser/Assets/Translation/screen_translation.mp4'
-intro_video: '/home/malchul/work/streams/stream_parser/Assets/Intro/Podtekatel_channel.mp4'
+intro_video: '/home/malchul/work/streams/stream_parser/Assets/Intro/Podtekatel_channel_v2.mp4'

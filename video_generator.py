@@ -109,16 +109,19 @@ def render_video(twitch_video: dict, config, platform_data=None):
     final_clips = []
     timecodes = []
     summary_time = 0
-    if config.intro_video is not None:
-        video_id = os.path.splitext(os.path.basename(config.intro_video))[0]
-        rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
-        os.system(
-            f"ffmpeg -y -fflags genpts -i \"{config.intro_video}\" \"{rendered_path}\"")
 
-        final_clips.append(VideoFileClip(rendered_path))
-        timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), 'Intro'])
-        summary_time += duration_for_file(rendered_path)
     for i, clip in enumerate(clips):
+        if config.intro_from_clip == i and config.intro_video is not None:
+            video_id = os.path.splitext(os.path.basename(config.intro_video))[0]
+            rendered_path = os.path.join(vid_finishedvids, f'{video_id}_finished.mp4')
+            os.system(
+                f"ffmpeg -y -fflags genpts -i \"{config.intro_video}\" \"{rendered_path}\"")
+
+            final_clips.append(VideoFileClip(rendered_path))
+            timecodes.append([time.strftime('%M:%S', time.gmtime(summary_time)), 'Intro'])
+            summary_time += duration_for_file(rendered_path)
+
+
         clip: Clip
         if not clip.isUsed:
             continue
