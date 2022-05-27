@@ -10,3 +10,4 @@ pymediainfo
 pysubs2
 pydub
 imgkit
+torchsr

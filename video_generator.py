@@ -24,6 +24,8 @@ from video_generator.video_editor.concatenate import concatenate_videoclips
 from video_generator.utils.moviepy_utils import numpad_alignment_to_moviepy
 from video_generator.title_generator.render_html import render_text
 from video_generator.subtitle_generator.twitch_data import TwitchData
+from video_generator.video_upsampling.dummy_upsampling import DummySR
+from video_generator.video_upsampling.simple_upsampling import SimpleSR
 
 
 def duration_for_file(filename):
@@ -94,6 +96,11 @@ def render_video(twitch_video: dict, config, platform_data=None):
     # self.colour2 = "White"
     # self.final_clips = None
     # self.audio_cat = "None"
+
+    try:
+        sr_callback = SimpleSR()
+    except:
+        sr_callback = DummySR()
 
     credits = []
     streamers_in_cred = []
@@ -208,14 +215,21 @@ def render_video(twitch_video: dict, config, platform_data=None):
                 logo = None
 
             if logo is not None or subtitle_logo is not None:
-                video_clip = VideoFileClip(rendered_path).fx(afx.volumex, volume).fx(resize, newsize=(w, h))
+                video_clip = VideoFileClip(rendered_path).fx(afx.volumex, volume)
+                if clip.apply_sr:
+                    video_clip = video_clip.fl_image(sr_callback.super_resolution)
+                video_clip = video_clip.fx(resize, newsize=(w, h))
                 result_clips = [video_clip]
                 for img_clip in [subtitle_logo, logo]:
                     if img_clip is not None:
                         result_clips.append(img_clip)
                 finish = CompositeVideoClip(result_clips)
             else:
-                finish = VideoFileClip(rendered_path).fx(afx.volumex, volume).fx(resize, newsize=(w, h))
+                video_clip = VideoFileClip(rendered_path).fx(afx.volumex, volume)
+                if clip.apply_sr:
+                    video_clip = video_clip.fl_image(sr_callback.super_resolution)
+                video_clip = video_clip.fx(resize, newsize=(w, h))
+                finish = video_clip
         else:
             finish = VideoFileClip(video_path).fx(afx.volumex, volume).fx(resize, newsize=(w, h))
         final_clips.append(finish)
