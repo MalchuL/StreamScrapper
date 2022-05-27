@@ -3,6 +3,7 @@ import os.path
 import pickle
 import subprocess
 
+import cv2
 import ujson
 from PyQt5 import QtWidgets, uic, QtMultimedia
 
@@ -316,6 +317,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self.keepOnNext.setChecked(item.clip.save_to_next)
             self.intervalCheckBox.setChecked(item.clip.isInterval)
             self.srCheckBox.setChecked(item.clip.apply_sr)
+            # Get video resolution
+
+            vid = cv2.VideoCapture(item.clip.filename)
+            height = vid.get(cv2.CAP_PROP_FRAME_HEIGHT)
+            width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
+            self.resolutionLabel.setText(f'resolutionLabel: {width}x{height}')
+            vid.release()
+
+
             # Draw slider values
 
             # We should disconnect end value changed because it would be called

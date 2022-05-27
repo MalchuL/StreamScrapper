@@ -202,6 +202,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="resolutionLabel">
+         <property name="text">
+          <string>Video resolution:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="viewerCount">
          <property name="acceptDrops">
           <bool>false</bool>
@@ -649,7 +656,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="subsAllignmenButtonGroup"/>
   <buttongroup name="titleAllignmenButtonGroup"/>
+  <buttongroup name="subsAllignmenButtonGroup"/>
  </buttongroups>
 </ui>
