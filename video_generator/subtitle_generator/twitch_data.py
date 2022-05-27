@@ -24,8 +24,12 @@ class TwitchData():
         Generate image with streamer simple link
     '''
     def generate_streamer_subtitle(self, clip, out_path='out.png'):
-        user_data = self.channel_scrapper.get_channels_by_logins([clip.streamer_name.lower()])[0]
-        profile_link = user_data['profile_image_url']
+        try:
+            user_data = self.channel_scrapper.get_channels_by_logins([clip.streamer_name.lower()])[0]
+            profile_link = user_data['profile_image_url']
+        except IndexError as e:
+            print(f'User {clip.streamer_name} may be banned')
+            return None
         render_text(text=self.get_simple_link(clip),
                     width=0,
                     out_path=out_path,

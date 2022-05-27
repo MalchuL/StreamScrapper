@@ -178,11 +178,14 @@ def render_video(twitch_video: dict, config, platform_data=None):
             # Render streamer name
             subtitle_out_path = os.path.join(final_subtitles_path, f'{video_id}.png')
             subtitle_out_path = platform_data.generate_streamer_subtitle(clip, subtitle_out_path)
-            subtitle_logo = (ImageClip(subtitle_out_path)
-                             .set_duration(final_duration)
-                             # .fx(resize, height=50)  # if you need to resize...
-                             # .margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
-                             .set_pos(numpad_alignment_to_moviepy(alignment)))
+            if subtitle_out_path is None:
+                subtitle_logo = None
+            else:
+                subtitle_logo = (ImageClip(subtitle_out_path)
+                                 .set_duration(final_duration)
+                                 # .fx(resize, height=50)  # if you need to resize...
+                                 # .margin(right=8, top=8, opacity=0)  # (optional) logo-border padding
+                                 .set_pos(numpad_alignment_to_moviepy(alignment)))
         else:
             subtitle_logo = None
 
