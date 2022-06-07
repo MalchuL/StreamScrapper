@@ -117,6 +117,8 @@ def render_video(twitch_video: dict, config, platform_data=None):
     timecodes = []
     summary_time = 0
 
+    clips = [clip for clip in clips if clip.isUsed]
+
     for i, clip in enumerate(clips):
         if config.intro_from_clip == i and config.intro_video is not None:
             video_id = os.path.splitext(os.path.basename(config.intro_video))[0]
