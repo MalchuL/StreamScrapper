@@ -289,12 +289,23 @@ class MainWindow(QtWidgets.QMainWindow):
             new_index = current_index - 1
             if new_index < 0:
                 new_index = self.clipsList.count() - 1
+            while self.clipsList.item(new_index).isHidden():
+                new_index = new_index - 1
+                if new_index < 0:
+                    new_index = self.clipsList.count() - 1
+                if new_index == current_index:
+                    break
+
             self.clipsList.setCurrentRow(new_index)
 
     def next_video(self):
         if self.clipsList.count() > 0:
             current_index = self.clipsList.currentIndex().row()
             new_index = (current_index + 1) % self.clipsList.count()
+            while self.clipsList.item(new_index).isHidden():
+                new_index = (new_index + 1) % self.clipsList.count()
+                if new_index == current_index:
+                    break
             self.clipsList.setCurrentRow(new_index)
 
 
