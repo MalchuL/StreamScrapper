@@ -24,7 +24,7 @@ class TopClipScrapper:
         self.start_time = get_now() if self.scrapper_config.start in ['now', None, 0] else parse_data(self.scrapper_config.start)
         self.end_time = subsctract_time(self.start_time, self.scrapper_config.before_days)
 
-    def get_clips(self, broadcaster_ids=None):
+    def get_clips(self, broadcaster_ids=None, ignore_filter=False):
         if broadcaster_ids is not None:
             broadcaster_ids = list(broadcaster_ids)
         twitch_api = self.twitch_api
@@ -74,7 +74,7 @@ class TopClipScrapper:
 
         filtered_clips = []
         for clip in clips:
-            if self.clip_filter.check_condition(clip):
+            if self.clip_filter.check_condition(clip) or ignore_filter:
                 filtered_clips.append(clip)
         return filtered_clips
 

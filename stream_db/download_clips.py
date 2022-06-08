@@ -58,6 +58,11 @@ def filter_channels(channels, excluded_channels):
             print(f'Exclude channel: {channel["user_login"]}')
     return resuls_channels
 
+def parse_included_channels(included_channels):
+    included_channels = list(map(str, included_channels))
+    return included_channels
+
+
 if __name__ == "__main__":
 
     user_secrets = get_yaml_config('user_secrets.yaml')
@@ -82,6 +87,8 @@ if __name__ == "__main__":
     channels = list(map(process_channel, channels)) # Apply some changes for processing
     channels = [channel for channel in channels if channel_filter.check_condition(channel)]
 
+    included_channels = parse_included_channels(config.included_channels)
+    print('Included channels is', included_channels)
     excluded_channels = parse_excluded_channels(config.excluded_channels)
     channels = filter_channels(channels, excluded_channels)
 
@@ -103,10 +110,10 @@ if __name__ == "__main__":
 
 
     for channel_id in tqdm(tuple(range(0, len(channels), CLIPS_BY_USER_PAGINATION))):
-        channels_subset = [channel['user_id'] for channel in
+        channels_subset = [channel for channel in
                            channels[channel_id:channel_id + CLIPS_BY_USER_PAGINATION]]
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            partials = (partial(clips_parser.get_clips, [channel_id]) for channel_id in channels_subset)
+            partials = (partial(clips_parser.get_clips, [channel['user_id']], ignore_filter=(channel["user_login"].lower() in included_channels or channel["user_name"].lower() in included_channels)) for channel in channels_subset)
             futures = [executor.submit(fn) for fn in partials]
         for user_clips in futures:
             clips.extend(user_clips.result())
