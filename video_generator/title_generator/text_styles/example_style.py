@@ -18,9 +18,12 @@ class ExampleStyle(Style):
                 
                 .text {
                   text-transform: uppercase;
-                  font-size: 70px;
+                  font-size: 50px;
                   font-weight: 600;
-                  background-image: linear-gradient(to left, #553c9a, #b393d3);
+                  background-image: linear-gradient(to left, #33245c, #4a3a59);
+                  font-family: Raleway;
+                  padding-top: 10px;
+                  padding-bottom: 10px;
                   color: transparent;
                   background-clip: text;
                   -webkit-background-clip: text;
