@@ -54,7 +54,7 @@ class TwitchDownloader:
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
             args.output = os.path.join(output_folder, args.output)
-        for _ in range(5):
+        for _ in range(2):
             try:
                 download(args)
                 return self.get_output_filename(video_id, output_folder=output_folder)
