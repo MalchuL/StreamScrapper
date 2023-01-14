@@ -46,7 +46,11 @@ def process_channel(channel):
 def parse_excluded_channels(excluded_channels):
     channels = []
     for name in excluded_channels:
-        channels.append(name.lower())
+        if os.path.exists(name):
+            with open(name, 'r') as f:
+                new_channels = f.readlines()
+                channels.extend(parse_excluded_channels(new_channels))
+        channels.append(name.lower().strip())
     return channels
 
 def filter_channels(channels, excluded_channels):
@@ -90,6 +94,7 @@ if __name__ == "__main__":
     included_channels = parse_included_channels(config.included_channels)
     print('Included channels is', included_channels)
     excluded_channels = parse_excluded_channels(config.excluded_channels)
+    print('Excluded channels', excluded_channels)
     channels = filter_channels(channels, excluded_channels)
 
 

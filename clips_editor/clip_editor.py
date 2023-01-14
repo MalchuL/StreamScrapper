@@ -58,6 +58,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clipWidget.button_play.clicked.disconnect()  # Disconnect base player button signals
         self.clipWidget.button_play.clicked.connect(self.play_video)
 
+        self.excludeStreamer.clicked.connect(self.exclude_streamer)
+
         self.deleteButton.clicked.connect(self.delete_current)
 
         self.clipWidget.button_open.clicked.disconnect()
@@ -128,6 +130,22 @@ class MainWindow(QtWidgets.QMainWindow):
         if item is not None:
             item.clip.end_cut = value
             self.start_play(item.clip.end_cut - self.ON_RANGE_CHANGE_OFFSET)
+
+    def exclude_streamer(self):
+        if self.clipsList.count() > 0:
+            streamer_name = self.clipsList.currentItem().clip.streamer_name
+            with open('excluded_streamers.txt', 'a') as f:
+                f.write(streamer_name + '\n')
+            self.next_video()
+            i = 0
+            while i < self.clipsList.count():
+                clip_data = self.clipsList.item(i)
+                if not clip_data.clip.isUsed and clip_data.clip.streamer_name == streamer_name:
+                    print('Exclude', clip_data.clip.filename)
+                    self.clipsList.takeItem(i)
+                else:
+                    i += 1
+            self.update_global_info()
 
     def delete_current(self):
         if self.clipsList.count() > 0:

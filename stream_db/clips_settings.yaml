@@ -23,7 +23,8 @@ channels_condition:
   viewer_count: "<=40"
 
 excluded_channels:
-  - LES_SHOW
+  # - LES_SHOW  # - Name
+  - excluded_streamers.txt  # Txt file
 
 clips_scrapper:
   game_names: ["Just Chatting"]

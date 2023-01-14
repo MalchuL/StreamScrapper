@@ -41,18 +41,8 @@
      </property>
      <item>
       <layout class="QGridLayout" name="clipsLayout">
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLineEdit" name="baseFolderEdit"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="ThumbListWidget" name="clipsList"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Base Clips Folder</string>
-         </property>
-        </widget>
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_2">
@@ -60,6 +50,24 @@
           <string>Clips</string>
          </property>
         </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Base Clips Folder</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <layout class="QHBoxLayout" name="streamerSpecific">
+         <item>
+          <widget class="QPushButton" name="excludeStreamer">
+           <property name="text">
+            <string>ExcludeStreamer</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="2" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -92,6 +100,9 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="1" column="0">
+        <widget class="ThumbListWidget" name="clipsList"/>
        </item>
       </layout>
      </item>
@@ -656,7 +667,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="titleAllignmenButtonGroup"/>
   <buttongroup name="subsAllignmenButtonGroup"/>
+  <buttongroup name="titleAllignmenButtonGroup"/>
  </buttongroups>
 </ui>
